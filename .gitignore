@@ -23,3 +23,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+util/mysql/2-schema.sql
+util/mysql/3-data.sql
