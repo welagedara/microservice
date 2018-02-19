@@ -1,6 +1,6 @@
 # microservice
 
-## Building the Docker Image
+## Deploying on Docker
 
 Create Docker Machine. Use this only if you have Docker Machine installed.
 ```
@@ -18,11 +18,11 @@ Clean up
 ```
 ./docker_cleanup.sh
 ```
-Remove Docker Machine
+Remove Docker Machine( optional)
 ```
 ./5-docker_remove-docker-machine.sh
 ```
-Note that the Shell Scripts are configured to be used in a Development Environment with Docker Machines. If that is not the case modify the shell scripts accordingly. 
+
 
 ## Useful Commands
 
