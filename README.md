@@ -23,6 +23,19 @@ Remove Docker Machine( optional)
 ./5-docker_remove-docker-machine.sh
 ```
 
+## Deploying on Kubernetes using kubectl( By default qa profile will be activated)
+Deploy MySQL
+```
+./6-kubectl_deploy-mysql.sh
+```
+Deploy MySQL( Pass TARGET_IMAGE_NAME to push it to your own Image Repository). By default the Service will be deployed in LoadBalancer configuration. Furthermore qa Spring Profile will be activated.
+```
+./7-kubectl_deploy-microservice.sh TARGET_IMAGE_NAME
+```
+Clean up
+```
+./8-kubectl_cleanup.sh
+```
 
 ## Useful Commands
 
@@ -73,6 +86,10 @@ Or Log into the Container using the below command.
 ```
 docker exec -it CONTAINER_ID /bin/bash
 ```
+
+## Discarded Directory
+
+You might find some useful code snippets in ./discarded directory.
 
 ## References
  - [Spring Guidelines for Docker](https://spring.io/guides/gs/spring-boot-docker/)

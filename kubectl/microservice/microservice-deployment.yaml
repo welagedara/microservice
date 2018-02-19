@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice
+spec:
+  selector:
+    matchLabels:
+      app: microservice
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: microservice
+    spec:
+      containers:
+      - image: pubuduwelagedara/microservice
+        name: latest
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: ROOT_PASSWORD
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
+        ports:
+        - containerPort: 8080
+          name: microservice

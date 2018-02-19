@@ -7,7 +7,8 @@ MYSQL_IMAGE_NAME=my-mysql
 MYSQL_IMAGE_TAG=latest
 NETWORK=my-network
 
-tag=$(git rev-parse --short HEAD)
+# tag=$(git rev-parse --short HEAD)
+tag=latest
 
 echo "Removing Docker Containers"
 containerId=`docker ps -qa --filter "name=$MICROSERVICE_CONTAINER_NAME"`

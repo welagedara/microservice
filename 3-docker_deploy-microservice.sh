@@ -9,7 +9,8 @@ NETWORK=my-network
 
 # TODO: 2/17/19 Check if the below line works if Docker Machine is not installed
 hostIp=$(docker-machine ip $DOCKER_MACHINE_NAME 2> /dev/null || echo 127.0.0.1)
-tag=$(git rev-parse --short HEAD)
+# tag=$(git rev-parse --short HEAD)
+tag=latest
 
 echo "Removing existing Containers"
 containerId=`docker ps -qa --filter "name=$CONTAINER_NAME"`

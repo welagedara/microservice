@@ -9,7 +9,7 @@ echo "Listing Docker Machines"
 docker-machine ls
 
 echo "Connecting to Docker Machine"
-eval "$(docker-machine env microservice)"
+eval "$(docker-machine env $DOCKER_MACHINE_NAME)"
 
 echo "Success"
 
