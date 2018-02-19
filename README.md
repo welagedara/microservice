@@ -2,21 +2,25 @@
 
 ## Building the Docker Image
 
-Create Docker Machine
+Create Docker Machine. Use this only if you have Docker Machine installed.
 ```
-./create-docker-machine.sh
+./1-docker_create-docker-machine.sh
 ```
 Deploy MySQL
 ```
-./deploy-mysql.sh
+./2-docker_deploy-mysql.sh
 ```
 Deploy the App
 ```
-./deploy-microservice.sh
+./3-docker_deploy-microservice.sh
 ```
-Tear everything down
+Clean up
 ```
-./remove-docker-machine.sh
+./docker_cleanup.sh
+```
+Remove Docker Machine
+```
+./5-docker_remove-docker-machine.sh
 ```
 Note that the Shell Scripts are configured to be used in a Development Environment with Docker Machines. If that is not the case modify the shell scripts accordingly. 
 
@@ -72,9 +76,9 @@ docker exec -it CONTAINER_ID /bin/bash
 
 ## References
  - [Spring Guidelines for Docker](https://spring.io/guides/gs/spring-boot-docker/)
-- [How to deploy Spring Boot on Kubernetes( Shows how Config Maps and Secrets are used)](https://github.com/IBM/spring-boot-microservices-on-kubernetes/blob/master/README.md)
-- [How to write the Jenkinsfile](https://github.com/jenkinsci/kubernetes-plugin) 
- 
+ - [How to deploy Spring Boot on Kubernetes( Shows how Config Maps and Secrets are used)](https://github.com/IBM/spring-boot-microservices-on-kubernetes/blob/master/README.md)
+ - [How to write the Jenkinsfile](https://github.com/jenkinsci/kubernetes-plugin) 
+ - [Docker Networking](https://rskupnik.github.io/docker_series_2_connecting_containers) 
  
  
  

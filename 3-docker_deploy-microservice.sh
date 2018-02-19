@@ -1,9 +1,14 @@
+#!/bin/sh
+
 DOCKER_MACHINE_NAME=microservice
 IMAGE_NAME=com.example/microservice
 CONTAINER_NAME=microservice-default
 MYSQL_ROOT_PASSWORD=root
+MYSQL_CONTAINER_NAME=mysql-default
+NETWORK=my-network
 
-dockerMachineIp=$(docker-machine ip $DOCKER_MACHINE_NAME)
+# TODO: 2/17/19 Check if the below line works if Docker Machine is not installed
+hostIp=$(docker-machine ip $DOCKER_MACHINE_NAME 2> /dev/null || echo 127.0.0.1)
 tag=$(git rev-parse --short HEAD)
 
 echo "Removing existing Containers"
@@ -23,9 +28,9 @@ echo "Building Docker Image"
 ./gradlew build -Ptag=$tag docker
 
 echo "Running the Container"
-docker run -d --name=$CONTAINER_NAME -p 8080:8080 -e DOCKER_MACHINE_HOST=$dockerMachineIp -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -t $IMAGE_NAME:$tag
+docker run -d --name=$CONTAINER_NAME -p 8080:8080 --network $NETWORK -e MYSQL_CONTAINER_NAME=$MYSQL_CONTAINER_NAME -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -t $IMAGE_NAME:$tag
 
 echo "Listing the Containers"
 docker ps
 
-echo "App running on http://$dockerMachineIp:8080"
+echo "App running on http://$hostIp:8080"
