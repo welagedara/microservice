@@ -93,9 +93,9 @@ You might find some useful code snippets in ./discarded directory.
 
 ## References
  - [Spring Guidelines for Docker](https://spring.io/guides/gs/spring-boot-docker/)
+ - [Docker Networking](https://rskupnik.github.io/docker_series_2_connecting_containers) 
  - [How to deploy Spring Boot on Kubernetes( Shows how Config Maps and Secrets are used)](https://github.com/IBM/spring-boot-microservices-on-kubernetes/blob/master/README.md)
  - [How to write the Jenkinsfile](https://github.com/jenkinsci/kubernetes-plugin) 
- - [Docker Networking](https://rskupnik.github.io/docker_series_2_connecting_containers) 
  
  
  
