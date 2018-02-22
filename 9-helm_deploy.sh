@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# This version uses a Config Map to initialize the Database. Config Maps can only hold upto 1MB of Data( Confirm this).
+
 IMAGE_NAME=com.example/microservice
 TARGET_IMAGE_NAME=${1:-pubuduwelagedara/microservice}
 
@@ -17,13 +19,9 @@ docker rmi $TARGET_IMAGE_NAME 2>/dev/null
 docker tag $IMAGE_NAME:$tag $TARGET_IMAGE_NAME:$tag
 docker push $TARGET_IMAGE_NAME
 
-# Now deploying the App
+# Merge all Database Scripts into one
+cat ./helm/mysql/database.sql ./src/main/resources/db/schema.sql ./src/main/resources/db/data.sql > ./helm/mysql/db.sql
 
-# TODO: 2/17/19 Below line will work with Mac. Check compatibility with Linux. Pushes the Image with the latest tag
-perl -pi -w -e 's/IMAGE_NAME/$ENV{'TARGET_IMAGE_NAME'}/g;' ./kubectl/microservice/microservice-deployment.yaml
+helm install --name db ./helm/mysql/
 
-# Service
-kubectl create -f ./kubectl/microservice/microservice-service.yaml
-
-# Deployment
-kubectl create -f ./kubectl/microservice/microservice-deployment.yaml
+helm install --name microservice ./helm/microservice/

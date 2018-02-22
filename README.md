@@ -37,6 +37,21 @@ Clean up
 ./8-kubectl_cleanup.sh
 ```
 
+## Deploying on Kubernetes using Helm
+
+Deploy the app with Helm using the below command. Note that this script will initialize the Database with a Config Map and that can be maximum 1MB in size( need to confirm this).
+```
+./9-helm_deploy.sh
+```
+Deploy the app with Helm using the below command. It will build the MySQL image with the initialization scripts. The script assumes your App image is already in built and pushed. 
+```
+./9-helm_deploy-v2.sh
+```
+Clean up
+```
+./9-helm_deploy-v2.sh
+```
+
 ## Useful Commands
 
 ```

@@ -29,7 +29,7 @@ echo "Building Docker Image"
 ./gradlew build -Ptag=$tag docker
 
 echo "Running the Container"
-docker run -d --name=$CONTAINER_NAME -p 8080:8080 --network $NETWORK -e MYSQL_CONTAINER_NAME=$MYSQL_CONTAINER_NAME -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -t $IMAGE_NAME:$tag
+docker run -d --name=$CONTAINER_NAME -p 8080:8080 --network $NETWORK -e MYSQL_HOST=$MYSQL_CONTAINER_NAME -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD $IMAGE_NAME:$tag
 
 echo "Listing the Containers"
 docker ps

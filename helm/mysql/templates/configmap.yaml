@@ -1,0 +1,22 @@
+{{- if .Values.configurationFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "mysql.fullname" . }}
+data:
+{{- range $key, $val := .Values.configurationFiles }}
+  {{ $key }}: |-
+{{ $val | indent 4}}
+{{- end }}
+{{- end -}}
+
+---
+{{- if .Values.databaseScript }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "mysql.fullname" . }}-database-script
+data:
+  db.sql: {{ range .Files.Lines  .Values.databaseScript.fileName }}
+    {{ . }}{{ end }}
+{{- end -}}

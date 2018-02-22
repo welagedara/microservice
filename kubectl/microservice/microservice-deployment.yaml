@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - image: pubuduwelagedara/microservice
-        name: latest
+        name: microservice
+        imagePullPolicy: Always
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -24,6 +25,8 @@ spec:
               key: ROOT_PASSWORD
         - name: SPRING_PROFILES_ACTIVE
           value: qa
+        - name: MYSQL_HOST
+          value: mysql-service
         ports:
         - containerPort: 8080
           name: microservice

@@ -9,4 +9,3 @@ echo "Listing Docker Machines"
 docker-machine ls
 
 echo "Success"
-
