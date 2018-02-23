@@ -87,6 +87,15 @@ Now you are all set.
 
 You might find some useful code snippets in ./discarded directory.
 
+## ToDos
+
+ - Handle Webhook Events from the Jenkinsfile( Commits, Tags, PRs)
+ - Build the App
+ - Push the App to Dockerhub or some private Repository
+ - Deploy the App( Using helm)
+ - Rollback ( Using Helm)
+ - Infrastructure Configuration( In the Infrastructure Repo)
+ 
 ## References
  - [Spring Guidelines for Docker](https://spring.io/guides/gs/spring-boot-docker/)
  - [Docker Networking](https://rskupnik.github.io/docker_series_2_connecting_containers) 
