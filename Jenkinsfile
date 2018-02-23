@@ -43,6 +43,7 @@ podTemplate(label: label, containers: [
 
                     sh "docker pull redis"
 
+
                     sh "docker images | grep mysql"
                     sh "docker images | grep redis"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
