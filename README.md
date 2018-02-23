@@ -66,7 +66,6 @@ Click New Pipeline Button to create the new Pipeline.
 ![Alt text](/images/2.png?raw=true "Optional Title")
 Jenkins will guide you through the rest of the process. You may need a GitHub Access Token to finish the configuration. If you do not have one Jenkins will guide you to do that.
 
-
 ### Adding Webhooks
 
 Go to Credentials -> System -> Global Credentials and click Add Credentials.
