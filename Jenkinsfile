@@ -30,9 +30,11 @@ podTemplate(label: label, containers: [
         if (env.BRANCH_NAME =~ "PR-*" ) {
             println "PR Branch is ${BRANCH_NAME}"
         }
+        
         if (env.BRANCH_NAME =~ "master" ) {
             println "master Branch is ${BRANCH_NAME}"
         }
+
         if (env.BRANCH_NAME =~ "dev" ) {
             println "dev Branch is ${BRANCH_NAME}"
         }
