@@ -59,13 +59,30 @@ Clean up
 
 ## Configuring Jenkins
 
-
+### Adding the Pipeline to Jenkins
 Open Blue Ocean Plugin.
 ![Alt text](/images/1.png?raw=true "Optional Title")
 Click New Pipeline Button to create the new Pipeline.
 ![Alt text](/images/2.png?raw=true "Optional Title")
-Jenkins will guide you through the rest of the process.
+Jenkins will guide you through the rest of the process. You may need a GitHub Access Token to finish the configuration. If you do not have one Jenkins will guide you to do that.
+
+
+### Adding Webhooks
+
+Go to Credentials -> System -> Global Credentials and click Add Credentials.
 ![Alt text](/images/3.png?raw=true "Optional Title")
+Select Secret Text. Then add a Shared Secret between Jenkins and Your GitHub Project. 
+![Alt text](/images/4.png?raw=true "Optional Title")
+Go to Configuration( Manage Jenkins). Then click Advanced Button which comes under GitHub.
+![Alt text](/images/5.png?raw=true "Optional Title")
+Select your Shared Secret. Then click Save.
+![Alt text](/images/6.png?raw=true "Optional Title")
+Go to your GitHub Project Settings -> Webhooks. Click Add Webhook.
+![Alt text](/images/7.png?raw=true "Optional Title")
+Payload URL will be <Your Jenkins URL>/github-webhook/. Select application/json as Content Type. Then select Send me everything under Triggers.
+![Alt text](/images/8.png?raw=true "Optional Title")
+Now you are all set.
+![Alt text](/images/9.png?raw=true "Optional Title")
 
 ## Discarded Directory
 
