@@ -40,7 +40,6 @@ podTemplate(label: label, containers: [
                         // some block
                         //sh "docker pull gcr.io/kubernetes-195622/mysql"
                     //}
-
                     sh "docker pull redis"
                     sh "docker images | grep mysql"
                     sh "docker images | grep redis"
