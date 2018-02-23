@@ -57,6 +57,11 @@ Clean up
 ./9-helm_cleanup.sh
 ```
 
+## Configuring Jenkins
+
+![alt text](https://github.com/welagedara/microservice/master/images/1.png)
+
+
 ## Discarded Directory
 
 You might find some useful code snippets in ./discarded directory.
