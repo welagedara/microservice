@@ -59,7 +59,7 @@ Clean up
 
 ## Configuring Jenkins
 
-![alt text](https://github.com/welagedara/microservice/master/images/1.png)
+![Alt text](/images/1.png?raw=true "Optional Title")
 
 
 ## Discarded Directory
