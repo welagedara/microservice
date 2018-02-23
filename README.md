@@ -59,8 +59,13 @@ Clean up
 
 ## Configuring Jenkins
 
-![Alt text](/images/1.png?raw=true "Optional Title")
 
+Open Blue Ocean Plugin.
+![Alt text](/images/1.png?raw=true "Optional Title")
+Click New Pipeline Button to create the new Pipeline.
+![Alt text](/images/2.png?raw=true "Optional Title")
+Jenkins will guide you through the rest of the process.
+![Alt text](/images/3.png?raw=true "Optional Title")
 
 ## Discarded Directory
 
