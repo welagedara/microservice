@@ -64,7 +64,7 @@ Open Blue Ocean Plugin.
 ![Alt text](/images/1.png?raw=true "Optional Title")
 Click New Pipeline Button to create the new Pipeline.
 ![Alt text](/images/2.png?raw=true "Optional Title")
-Jenkins will guide you through the rest of the process. You may need a GitHub Access Token to finish the configuration. If you do not have one Jenkins will guide you to do that.
+Jenkins will guide you through the rest of the process. Select GitHub then you may be asked to create a GitHub Access Token. 
 
 ### Adding Webhooks
 
