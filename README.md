@@ -70,19 +70,19 @@ Jenkins will guide you through the rest of the process. You may need a GitHub Ac
 ### Adding Webhooks
 
 Go to Credentials -> System -> Global Credentials and click Add Credentials.
-![Alt text](/images/3.png?raw=true "Optional Title")
+![Alt text](/images/3.png?raw=true "Credentials")
 Select Secret Text. Then add a Shared Secret between Jenkins and Your GitHub Project. 
-![Alt text](/images/4.png?raw=true "Optional Title")
+![Alt text](/images/4.png?raw=true "Add the Shared Secret")
 Go to Configuration( Manage Jenkins). Then click Advanced Button which comes under GitHub.
-![Alt text](/images/5.png?raw=true "Optional Title")
+![Alt text](/images/5.png?raw=true "Manage Jenkins")
 Select your Shared Secret. Then click Save.
-![Alt text](/images/6.png?raw=true "Optional Title")
+![Alt text](/images/6.png?raw=true "Save the Secret")
 Go to your GitHub Project Settings -> Webhooks. Click Add Webhook.
-![Alt text](/images/7.png?raw=true "Optional Title")
+![Alt text](/images/7.png?raw=true "Webhook")
 Payload URL will be <Your Jenkins URL>/github-webhook/. Select application/json as Content Type. Then select Send me everything under Triggers.
-![Alt text](/images/8.png?raw=true "Optional Title")
+![Alt text](/images/8.png?raw=true "Webhook Configuration")
 Now you are all set.
-![Alt text](/images/9.png?raw=true "Optional Title")
+![Alt text](/images/9.png?raw=true "Webhook Configured")
 
 ## Discarded Directory
 
