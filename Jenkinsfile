@@ -27,6 +27,18 @@ podTemplate(label: label, containers: [
         println "${GIT_CURRENT_BRANCH}"
         //println "${BRANCH_NAME}"
 
+        if (env.BRANCH_NAME =~ "PR-*" ) {
+            println "PR Branch is ${BRANCH_NAME}"
+        }
+
+        if (env.BRANCH_NAME =~ "master" ) {
+            println "master Branch is ${BRANCH_NAME}"
+        }
+
+        if (env.BRANCH_NAME =~ "dev" ) {
+            println "dev Branch is ${BRANCH_NAME}"
+        }
+
         stage('docker test') {
             //git 'https://github.com/welagedara/microservice.git'
             container('docker') {
