@@ -18,7 +18,6 @@ podTemplate(label: label, containers: [
         env.MYTOOL_VERSION = '1.33'
         env.GIT_COMMIT_HASH=library.getCommitHash()
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
-        env.SPRING_PROFILES_ACTIVE=dev
 
         println "${GIT_COMMIT_HASH}"
         println "${GIT_CURRENT_BRANCH}"
@@ -53,9 +52,8 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     sh 'cat /etc/hosts'
-                    sh 'echo ${SPRING_PROFILES_ACTIVE}'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
-                    sh './gradlew build'
+                    sh './gradlew clean build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
