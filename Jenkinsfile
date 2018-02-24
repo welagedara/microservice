@@ -51,13 +51,10 @@ podTemplate(label: label, containers: [
         //build
         stage('Build') {
             container('java') {
-                stage('Build the Java Project') {
                     sh './gradlew clean build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
-
-                }
             }
         }
 
