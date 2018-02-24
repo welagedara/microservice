@@ -58,7 +58,7 @@ podTemplate(label: label, containers: [
             }
         }
 
-        /*
+
 
         //docker image build
         stage('Dockerize & Publish') {
@@ -72,71 +72,6 @@ podTemplate(label: label, containers: [
         }
 
         //publish
-
-
-
-
-
-
-        stage('docker test') {
-            //git 'https://github.com/welagedara/microservice.git'
-            container('docker') {
-                    sh 'ls'
-
-                    //sh 'mvn -B clean install'
-                    library.dockerTest()
-                    sh 'ls'
-                    sh "echo ${GIT_COMMIT_HASH}"
-                    sh "docker ps"
-                    //withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                        // some block
-                        //sh "docker pull gcr.io/kubernetes-195622/mysql"
-                    //}
-                    sh "docker pull redis"
-                    sh "docker images | grep mysql"
-                    sh "docker images | grep redis"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
-
-            }
-        }
-
-
-        stage('Buildg project') {
-            //git 'https://github.com/welagedara/microservice.git'
-            container('java') {
-                stage('Build the Java Project') {
-                    sh 'ls'
-                    sh "echo ${GIT_COMMIT_HASH}"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
-
-                }
-            }
-        }
-
-        stage('Get a Maven project') {
-            //git 'https://github.com/jenkinsci/kubernetes-plugin.git'
-            container('maven') {
-                stage('Build a Maven project') {
-                    sh 'pwd'
-                    sh 'ls'
-                    sh 'echo $MYTOOL_VERSION'
-                }
-            }
-        }
-
-        stage('Get a Golang project') {
-            //git url: 'https://github.com/hashicorp/terraform.git'
-            container('golang') {
-                stage('Build a Go project') {
-                    sh """
-                    pwd
-                    ls
-                    echo $MYTOOL_VERSION
-                    """
-                }
-            }
-        }
-        */
 
     }
 }
