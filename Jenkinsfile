@@ -11,6 +11,7 @@ podTemplate(label: label, containers: [
   ],
   volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
+    hostPathVolume(mountPath: '/home/gradle/.gradle', hostPath: '/tmp/jenkins/.gradle')
   ]) {
 
     node(label) {
