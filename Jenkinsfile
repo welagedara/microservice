@@ -52,6 +52,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     sh 'cat /etc/hosts'
+                    sh 'echo ${SPRING_PROFILES_ACTIVE}'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
                     sh './gradlew build'
                     //sh 'ls'
