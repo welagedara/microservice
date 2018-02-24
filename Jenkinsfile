@@ -39,6 +39,10 @@ podTemplate(label: label, containers: [
             println "dev Branch is ${BRANCH_NAME}"
         }
 
+        if( env.BRANCH_NAME.startsWith("release-") ) {
+         println "release Branch is ${BRANCH_NAME}"
+        }
+
         stage('docker test') {
             //git 'https://github.com/welagedara/microservice.git'
             container('docker') {
