@@ -53,7 +53,7 @@ podTemplate(label: label, containers: [
             container('java') {
                     sh 'cat /etc/hosts'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
-                    sh './gradlew clean build'
+                    sh './gradlew clean build -PspringProfiles=dev'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
