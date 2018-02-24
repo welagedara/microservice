@@ -4,7 +4,6 @@ def library = new com.example.Library()
 def label = "mypod-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-    containerTemplate(name: 'gradle', image: 'gradle:4.5.1-jdk8', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'java', image: 'openjdk:8-jre-alpine', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker:1.12.6', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
@@ -54,7 +53,7 @@ podTemplate(label: label, containers: [
             container('java') {
                     sh 'cat /etc/hosts'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
-                    sh 'gradle build'
+                    sh './gradlew build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
