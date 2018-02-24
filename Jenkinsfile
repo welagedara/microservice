@@ -23,6 +23,7 @@ podTemplate(label: label, containers: [
         env.GIT_COMMIT_HASH=library.getCommitHash()
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
 
+
         println "${GIT_COMMIT_HASH}"
         println "${GIT_CURRENT_BRANCH}"
         //println "${BRANCH_NAME}"
