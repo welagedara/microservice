@@ -4,7 +4,7 @@ def library = new com.example.Library()
 def label = "mypod-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-    containerTemplate(name: 'java', image: 'openjdk:8-jre-alpine', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'java', image: 'airdock/oracle-jdk:1.8', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker:1.12.6', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
   ],
