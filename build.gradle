@@ -44,3 +44,7 @@ docker {
 	files jar.archivePath
 	buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
+
+test {
+	ignoreFailures = true
+}
