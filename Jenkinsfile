@@ -53,7 +53,7 @@ podTemplate(label: label, containers: [
             container('java') {
                     sh 'cat /etc/hosts'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
-                    # TODO: 2/17/18 Enable tests
+                    // TODO: 2/17/18 Enable tests
                     sh './gradlew clean build -x test'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
