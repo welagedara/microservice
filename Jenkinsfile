@@ -58,6 +58,8 @@ podTemplate(label: label, containers: [
             }
         }
 
+        /*
+
         //docker image build
         stage('Dockerize & Publish') {
             container('docker') {
@@ -74,13 +76,13 @@ podTemplate(label: label, containers: [
 
 
 
-        /*
+
 
         stage('docker test') {
             //git 'https://github.com/welagedara/microservice.git'
             container('docker') {
                     sh 'ls'
-                    /*
+
                     //sh 'mvn -B clean install'
                     library.dockerTest()
                     sh 'ls'
@@ -94,7 +96,7 @@ podTemplate(label: label, containers: [
                     sh "docker images | grep mysql"
                     sh "docker images | grep redis"
                     //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
-                    */
+
             }
         }
 
