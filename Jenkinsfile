@@ -52,6 +52,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     sh 'cat /etc/hosts'
+                    sh 'curl https://www.w3schools.com/angular/customers.php'
                     //sh './gradlew clean build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
