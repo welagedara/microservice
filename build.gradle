@@ -44,7 +44,3 @@ docker {
 	files jar.archivePath
 	buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
-
-test {
-	systemProperty("spring.profiles.active", project.properties.get("springProfiles"))
-}
