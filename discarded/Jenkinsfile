@@ -1,12 +1,16 @@
+// TODO: 2/17/19 Work on this
 @Library('github.com/welagedara/pipeline-github-lib@master')
 
 def library = new com.example.Library()
+
 def label = "mypod-${UUID.randomUUID().toString()}"
 
+// TODO: 2/17/19 Work on this
 podTemplate(label: label, containers: [
     containerTemplate(name: 'java', image: 'airdock/oracle-jdk:1.8', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker:1.12.6', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
+    containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
   ],
   volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
@@ -23,31 +27,22 @@ podTemplate(label: label, containers: [
         println "${GIT_CURRENT_BRANCH}"
         //println "${BRANCH_NAME}"
 
-        /*
-        if [[ "$(docker images -q myimage:mytag 2> /dev/null)" == "" ]]; then
-          # do something
-        fi
-        */
-        println "Environment is ${KUBERNETES_ENVIRONMENT}"
-
         if (env.BRANCH_NAME =~ "PR-*" ) {
             println "PR Branch is ${BRANCH_NAME}"
         }
         
-        if (env.BRANCH_NAME == "master" ) {
+        if (env.BRANCH_NAME =~ "master" ) {
             println "master Branch is ${BRANCH_NAME}"
         }
 
-        if (env.BRANCH_NAME == "dev" ) {
+        if (env.BRANCH_NAME =~ "dev" ) {
             println "dev Branch is ${BRANCH_NAME}"
         }
 
         if( env.BRANCH_NAME.startsWith("release-") ) {
          println "release Branch is ${BRANCH_NAME}"
         }
-
-
-        /*
+        
 
         stage('docker test') {
             //git 'https://github.com/welagedara/microservice.git'
@@ -107,7 +102,6 @@ podTemplate(label: label, containers: [
                 }
             }
         }
-        */
 
     }
 }
