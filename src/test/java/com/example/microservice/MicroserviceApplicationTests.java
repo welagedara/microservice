@@ -12,5 +12,4 @@ public class MicroserviceApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }
