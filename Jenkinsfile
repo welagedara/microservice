@@ -5,13 +5,12 @@ def label = "mypod-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
     containerTemplate(name: 'gradle', image: 'gradle:4.5.1-jdk8', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'java', image: 'airdock/oracle-jdk:1.8', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'java', image: 'openjdk:8-jre-alpine', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker:1.12.6', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
   ],
   volumes:[
-    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-    hostPathVolume(mountPath: '/home/gradle/.gradle', hostPath: '/tmp/jenkins/.gradle')
+    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
   ]) {
 
     node(label) {
@@ -52,7 +51,7 @@ podTemplate(label: label, containers: [
 
         //build
         stage('Build') {
-            container('gradle') {
+            container('java') {
                     sh 'cat /etc/hosts'
                     sh 'curl -k https://www.w3schools.com/angular/customers.php'
                     sh 'gradle build'
