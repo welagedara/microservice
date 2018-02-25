@@ -24,6 +24,7 @@ podTemplate(label: label, containers: [
         println 'hash...'
         sh 'git remote show origin'
         sh 'git rev-parse --short HEAD'
+        sh 'cat Jenkinsfile'
 
         println "${GIT_COMMIT_HASH}"
         println "${GIT_CURRENT_BRANCH}"
