@@ -15,6 +15,7 @@ podTemplate(label: label, containers: [
     node(label) {
 
         // Environment Variables
+        env.SOURCE_REPO='https://github.com/welagedara/microservice.git'
         env.CHART_LOCATION='./helm/microservice/'
         env.HELM_NAME = 'microservice'
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
@@ -25,16 +26,15 @@ podTemplate(label: label, containers: [
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
         // Code checkout
-        git 'https://github.com/welagedara/microservice.git'
+        git "${SOURCE_REPO}"
         sh "git checkout ${BRANCH_NAME}"
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-        println "[Jenkinsfile INFO] Commit Hash is ${ENVIRONMENT}"
+        println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
         /*
         if [[ "$(docker images -q myimage:mytag 2> /dev/null)" == "" ]]; then
           # do something
         fi
-        */
 
         if (env.BRANCH_NAME =~ "PR-*" ) {
             println "PR Branch is ${BRANCH_NAME}"
@@ -51,6 +51,7 @@ podTemplate(label: label, containers: [
         if( env.BRANCH_NAME.startsWith("release-") ) {
          println "release Branch is ${BRANCH_NAME}"
         }
+        */
 
         // Stages of the Deployment
 
