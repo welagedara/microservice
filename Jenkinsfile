@@ -63,7 +63,6 @@ podTemplate(label: label, containers: [
         println currentBuild.getPreviousBuild().id
         println currentBuild.getPreviousBuild().description
         println currentBuild.getPreviousBuild().number
-        println "${GIT_COMMIT}"
         //env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "").trim()
 
         // Building the App
