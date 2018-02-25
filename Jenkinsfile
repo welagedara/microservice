@@ -55,6 +55,10 @@ podTemplate(label: label, containers: [
 
         // Stages of the Deployment
 
+        // Prebuild
+        // Here we check whether the App has been built before and is available
+        println currentBuild.getPreviousBuild()
+
         // Building the App
         // Environments qa and release( because you do not build the Image between the Environments)
         // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
@@ -88,7 +92,7 @@ podTemplate(label: label, containers: [
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
                     sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-                    // Publish to Google Container Engine
+                    // Publish to Google Container Registry
                     withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
                         sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
