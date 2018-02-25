@@ -84,7 +84,17 @@ podTemplate(label: label, containers: [
             }
         }
 
-        //publish
+        //deploy
+        stage('Deploy') {
+            container('helm') {
+                    sh 'helm list'
+
+                    //sh './gradlew clean build'
+                    //sh 'ls'
+                    //sh "echo ${GIT_COMMIT_HASH}"
+                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
+            }
+        }
 
     }
 }
