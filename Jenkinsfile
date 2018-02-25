@@ -27,6 +27,8 @@ podTemplate(label: label, containers: [
         sh "git checkout ${BRANCH_NAME}"
         sh 'cat Jenkinsfile'
 
+        env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+
         println "${GIT_COMMIT_HASH}"
         println "${GIT_CURRENT_BRANCH}"
         //println "${BRANCH_NAME}"
