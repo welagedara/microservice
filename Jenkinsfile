@@ -22,6 +22,7 @@ podTemplate(label: label, containers: [
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
         println 'hash...'
+        sh 'git remote show origin'
         sh 'git rev-parse --short HEAD'
 
         println "${GIT_COMMIT_HASH}"
