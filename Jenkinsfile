@@ -130,7 +130,9 @@ def lastSuccessfullBuild(build, passedBuilds) {
         if(build.result == 'SUCCESS') {
             println build.displayName;
             passedBuilds.add(build);
+            println commitHashForBuild(build.rawBuild)
 
+            /*
             def changeLogSets = build.changeSets
             for (int i = 0; i < changeLogSets.size(); i++) {
                 def entries = changeLogSets[i].items
@@ -144,7 +146,14 @@ def lastSuccessfullBuild(build, passedBuilds) {
                     }
                 }
             }
+            */
         }
         lastSuccessfullBuild(build.getPreviousBuild(), passedBuilds);
     }
+ }
+
+ @NonCPS
+ def commitHashForBuild( build ) {
+   def scmAction = build?.actions.find { action -> action instanceof jenkins.scm.api.SCMRevisionAction }
+   return scmAction?.revision?.hash
  }
