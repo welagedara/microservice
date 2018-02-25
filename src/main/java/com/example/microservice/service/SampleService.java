@@ -16,10 +16,11 @@ public class SampleService {
     private GreetingRepository greetingRepository;
 
     public MessageDto sayHello() {
-        List<Greeting> greetings = greetingRepository.findAll();
-
-        // Pick a random greeting
-        Random random = new Random();
-        return new MessageDto(greetings.get(random.nextInt(greetings.size())).getMessage());
+        return new MessageDto("this works");
+//        List<Greeting> greetings = greetingRepository.findAll();
+//
+//        // Pick a random greeting
+//        Random random = new Random();
+//        return new MessageDto(greetings.get(random.nextInt(greetings.size())).getMessage());
     }
 }
