@@ -24,36 +24,17 @@ podTemplate(label: label, containers: [
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
-
-        sh 'echo lsssssss'
-        sh 'ls'
-
+        // Code checkout
         git 'https://github.com/welagedara/microservice.git'
-        env.MYTOOL_VERSION = '1.33'
-
-        //sh "git rev-parse --short HEAD > commit-hash.txt"
-        //env.GIT_COMMIT_HASH=readFile('commit-hash.txt').trim()
-        env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-        env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
-        println 'hash...'
-        sh 'git remote show origin'
-        sh 'git rev-parse --short HEAD'
         sh "git checkout ${BRANCH_NAME}"
-        sh 'cat Jenkinsfile'
-
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-
-        println "${GIT_COMMIT_HASH}"
-        println "${GIT_CURRENT_BRANCH}"
-        //println "${BRANCH_NAME}"
+        println "[Jenkinsfile INFO] Commit Hash is ${ENVIRONMENT}"
 
         /*
         if [[ "$(docker images -q myimage:mytag 2> /dev/null)" == "" ]]; then
           # do something
         fi
         */
-
-        println "Environment is ${ENVIRONMENT}"
 
         if (env.BRANCH_NAME =~ "PR-*" ) {
             println "PR Branch is ${BRANCH_NAME}"
@@ -74,18 +55,22 @@ podTemplate(label: label, containers: [
         // Stages of the Deployment
 
         // Building the App
-        // Environments only qa( because you do not build the Image between the Environments)
+        // Environments qa and release( because you do not build the Image between the Environments)
+        // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Build') {
             container('java') {
+                    println "[Jenkinsfile INFO] Stage Build starting..."
                     // TODO: 2/17/18 Enable tests
                     sh './gradlew clean build -x test'
+                    println "[Jenkinsfile INFO] Successfully built the App"
             }
         }
 
 
 
         // Dokerization of the App
-        // Environments only qa( because you do not build the Image between the Environments)
+        // Environments qa and release( because you do not build the Image between the Environments)
+        // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Dockerize') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
@@ -98,7 +83,8 @@ podTemplate(label: label, containers: [
         }
 
         // Publish the Image to a Docker Registry
-        // Environments only qa( because you do not build the Image between the Environments)
+        // Environments qa and release( because you do not build the Image between the Environments)
+        // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Publish') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
@@ -113,6 +99,7 @@ podTemplate(label: label, containers: [
 
         // Deploy the App.
         // Environments qa, staging & production
+        // Branches dev, release & master
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
