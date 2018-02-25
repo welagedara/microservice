@@ -58,6 +58,20 @@ podTemplate(label: label, containers: [
         // Prebuild
         // Here we check whether the App has been built before and is available
         println currentBuild.getPreviousBuild()
+        passedBuilds = []
+        def lastSuccessfullBuild(build) {
+            if(build != null && build.result != 'FAILURE') {
+                //Recurse now to handle in chronological order
+                lastSuccessfullBuild(build.getPreviousBuild());
+                //Add the build to the array
+                passedBuilds.add(build);
+            }
+         }
+         lastSuccessfullBuild(currentBuild.getPreviousBuild());
+
+         passedBuilds.each { animalName ->
+             println "Animal ${animalName}"
+         }
 
         // Building the App
         // Environments qa and release( because you do not build the Image between the Environments)
