@@ -13,9 +13,7 @@ podTemplate(label: label, containers: [
   ]) {
 
     node(label) {
-
-        sh 'git remote show origin'
-        sh 'git status'
+        sh 'echo lsssssss'
         sh 'ls'
 
         git 'https://github.com/welagedara/microservice.git'
