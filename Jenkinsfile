@@ -84,7 +84,7 @@ podTemplate(label: label, containers: [
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
 
-                    sh "docker images | grep ${DOCKER_IMAGE_NAME} | grep ${GIT_COMMIT_HASH}"
+                    //sh "docker images | grep ${DOCKER_IMAGE_NAME} | grep ${GIT_COMMIT_HASH}"
                     GIT_COMMIT_EMAIL = sh (
                         script: 'docker images',
                         returnStdout: true
