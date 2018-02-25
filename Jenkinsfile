@@ -83,7 +83,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    sh "docker images | grep ${DOCKER_IMAGE_NAME}"
+                    sh "docker images | grep ${DOCKER_IMAGE_NAME} | grep 89a90a05f855"
                     sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
                     sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
