@@ -88,9 +88,9 @@ podTemplate(label: label, containers: [
                         sh "docker push gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
                     }
 
-                    sh 'echo removingggggggggggggggg'
-                    sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
-                    sh 'docker images'
+                    //sh 'echo removingggggggggggggggg'
+                    //sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    //sh 'docker images'
 
 
                     //sh './gradlew clean build'
@@ -120,6 +120,7 @@ podTemplate(label: label, containers: [
                     } catch (err) {
                         echo "Caught: ${err}"
                         currentBuild.result = 'FAILURE'
+                        
                     } finally {
                             sh 'echo cleaninnnnnnng'
                             sh 'helm list'
