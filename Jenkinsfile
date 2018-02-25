@@ -13,6 +13,13 @@ podTemplate(label: label, containers: [
   ]) {
 
     node(label) {
+
+        // Environment Variables
+        env.CHART_LOCATION='./helm/microservice/'
+        env.HELM_NAME = 'microservice'
+        env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
+        env.DOCKER_IMAGE_NAME='microservice'
+
         sh 'echo lsssssss'
         sh 'ls'
 
@@ -41,7 +48,7 @@ podTemplate(label: label, containers: [
         fi
         */
 
-        println "Environment is ${KUBERNETES_ENVIRONMENT}"
+        println "Environment is ${ENVIRONMENT}"
 
         if (env.BRANCH_NAME =~ "PR-*" ) {
             println "PR Branch is ${BRANCH_NAME}"
@@ -98,42 +105,31 @@ podTemplate(label: label, containers: [
             }
         }
 
-        //docker image build
+        // Publish the Image to a Docker Registry
+        // Environments only qa( because you do not build the Image between the Environments)
         stage('Publish') {
             container('docker') {
 
-                    sh 'docker images | grep microservice'
-                    sh "docker tag microservice:${GIT_COMMIT_HASH} gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
 
+                    // Publish to Google Container Engine
                     withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                        sh "docker push gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                        sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
-
-                    //sh 'echo removingggggggggggggggg'
-                    //sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
-                    //sh 'docker images'
-
-
-                    //sh './gradlew clean build'
-                    //sh 'ls'
-                    //sh "echo ${GIT_COMMIT_HASH}"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
             }
         }
 
-        //deploy
+        // Deploy the App.
+        // Environments qa, staging & production
         stage('Deploy') {
             container('helm') {
+                    sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                    println "[Jenkinsfile INFO] Success"
                     sh 'helm list'
-                    sh "helm upgrade --install --set image.repository=gcr.io/kubernetes-195622/microservice --set image.tag=${GIT_COMMIT_HASH} microservice ./helm/microservice/"
-                    sh 'helm list'
-                    //sh './gradlew clean build'
-                    //sh 'ls'
-                    //sh "echo ${GIT_COMMIT_HASH}"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
             }
         }
 
+        /*
         stage('Test') {
             container('helm') {
                 try {
@@ -149,6 +145,7 @@ podTemplate(label: label, containers: [
              }
 
         }
+        */
 
 
     }
