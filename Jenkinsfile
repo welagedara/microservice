@@ -63,7 +63,7 @@ podTemplate(label: label, containers: [
 
 
                     GIT_COMMIT_EMAIL = sh (
-                        script: "docker images | grep ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}",
+                        script: "docker images | grep -v -e ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} -e ${GIT_COMMIT_HASH} 2> /dev/null",
                         returnStdout: true
                     ).trim()
 
