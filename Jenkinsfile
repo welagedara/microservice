@@ -33,6 +33,7 @@ podTemplate(label: label, containers: [
           # do something
         fi
         */
+        
         println "Environment is ${KUBERNETES_ENVIRONMENT}"
 
         if (env.BRANCH_NAME =~ "PR-*" ) {
