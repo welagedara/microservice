@@ -60,7 +60,8 @@ podTemplate(label: label, containers: [
 
         println "sdasdasdasd"
         println currentBuild.getPreviousBuild().displayName
-
+        println currentBuild.getPreviousBuild().id
+        println currentBuild.getPreviousBuild().description
 
         // Building the App
         // Environments qa and release( because you do not build the Image between the Environments)
