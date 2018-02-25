@@ -18,6 +18,8 @@ podTemplate(label: label, containers: [
         env.MYTOOL_VERSION = '1.33'
         env.GIT_COMMIT_HASH=library.getCommitHash()
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
+        sh 'hash...'
+        sh 'git rev-parse --short HEAD'
 
         println "${GIT_COMMIT_HASH}"
         println "${GIT_CURRENT_BRANCH}"
