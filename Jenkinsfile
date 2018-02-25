@@ -99,7 +99,7 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     sh 'helm list'
-                    sh "helm upgrade --install ./helm/microservice/"
+                    sh "helm upgrade --install --set image.repository=gcr.io/kubernetes-195622/microservice --set image.tag=${GIT_COMMIT_HASH} microservice ./helm/microservice/"
                     sh 'helm list'
                     //sh './gradlew clean build'
                     //sh 'ls'
