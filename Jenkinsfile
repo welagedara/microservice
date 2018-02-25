@@ -108,5 +108,19 @@ podTemplate(label: label, containers: [
             }
         }
 
+        stage('Test') {
+            container('helm') {
+                try {
+                        sh 'might fail'
+                    } catch (err) {
+                        echo "Caught: ${err}"
+                        // currentBuild.result = 'FAILURE'
+                    } finally {
+                            sh 'echo cleaninnnnnnng'
+                        }
+             }
+
+        }
+
     }
 }
