@@ -71,6 +71,10 @@ podTemplate(label: label, containers: [
                     sh 'cp ./build/libs/microservice-0.0.1.jar ./docker/microservice/'
                     sh "docker build -t microservice:${GIT_COMMIT_HASH} ./docker/microservice/"
                     sh 'docker images | grep microservice'
+                    sh "docker tag microservice:${GIT_COMMIT_HASH} gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
+                        sh "docker pull gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    }
 
 
                     //sh './gradlew clean build'
