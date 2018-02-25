@@ -63,6 +63,7 @@ podTemplate(label: label, containers: [
         println currentBuild.getPreviousBuild().id
         println currentBuild.getPreviousBuild().description
         println currentBuild.getPreviousBuild().number
+        println "${GIT_COMMIT}"
 
         // Building the App
         // Environments qa and release( because you do not build the Image between the Environments)
