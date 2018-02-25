@@ -86,7 +86,7 @@ podTemplate(label: label, containers: [
 
                     //sh "docker images | grep ${DOCKER_IMAGE_NAME} | grep ${GIT_COMMIT_HASH}"
                     GIT_COMMIT_EMAIL = sh (
-                        script: 'docker images',
+                        script: 'docker images | grep microservice',
                         returnStdout: true
                     ).trim()
                     echo "Git committer email: ${GIT_COMMIT_EMAIL}"
