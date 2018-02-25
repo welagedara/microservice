@@ -14,6 +14,10 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
+        sh 'git remote show origin'
+        sh 'git status'
+        sh 'ls'
+
         git 'https://github.com/welagedara/microservice.git'
         env.MYTOOL_VERSION = '1.33'
 
@@ -120,7 +124,7 @@ podTemplate(label: label, containers: [
                     } catch (err) {
                         echo "Caught: ${err}"
                         currentBuild.result = 'FAILURE'
-                        
+
                     } finally {
                             sh 'echo cleaninnnnnnng'
                             sh 'helm list'
