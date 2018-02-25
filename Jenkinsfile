@@ -114,7 +114,7 @@ podTemplate(label: label, containers: [
                         sh 'might fail'
                     } catch (err) {
                         echo "Caught: ${err}"
-                        // currentBuild.result = 'FAILURE'
+                        currentBuild.result = 'FAILURE'
                     } finally {
                             sh 'echo cleaninnnnnnng'
                         }
