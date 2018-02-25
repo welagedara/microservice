@@ -57,14 +57,10 @@ podTemplate(label: label, containers: [
 
         // Prebuild
         // Here we check whether the App has been built before and is available
-        currentBuild.getPreviousBuild().getBuildVariables().each { key, value ->
-                                                               println "Key $key == Value $value"
-                                                           }
 
+        println "sdasdasdasd"
+        println currentBuild.getPreviousBuild().displayName
 
-         passedBuilds.each { animalName ->
-             println "Animal ${animalName}"
-         }
 
         // Building the App
         // Environments qa and release( because you do not build the Image between the Environments)
