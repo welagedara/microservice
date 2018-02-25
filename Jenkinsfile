@@ -63,10 +63,10 @@ podTemplate(label: label, containers: [
 
 
                     GIT_COMMIT_EMAIL = sh (
-                        script: "docker images | grep ${DOCKER_IMAGE_NAME}",
+                        script: "docker images | grep ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} | grep ${GIT_COMMIT_HASH}",
                         returnStdout: true
                     ).trim()
-                    
+
                     echo "Git committer email: ${GIT_COMMIT_EMAIL}"
 
                     println "[Jenkinsfile INFO] Successfully ran Prebuild"
