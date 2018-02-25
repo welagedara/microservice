@@ -57,17 +57,10 @@ podTemplate(label: label, containers: [
 
         // Prebuild
         // Here we check whether the App has been built before and is available
-        println currentBuild.getPreviousBuild()
-        passedBuilds = []
-        def lastSuccessfullBuild(build) {
-            if(build != null && build.result != 'FAILURE') {
-                //Recurse now to handle in chronological order
-                lastSuccessfullBuild(build.getPreviousBuild());
-                //Add the build to the array
-                passedBuilds.add(build);
-            }
-         }
-         lastSuccessfullBuild(currentBuild.getPreviousBuild());
+        currentBuild.getPreviousBuild().getBuildVariables().each { key, value ->
+                                                               println "Key $key == Value $value"
+                                                           }
+
 
          passedBuilds.each { animalName ->
              println "Animal ${animalName}"
