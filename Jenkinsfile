@@ -19,6 +19,11 @@ podTemplate(label: label, containers: [
         env.HELM_NAME = 'microservice'
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
         env.DOCKER_IMAGE_NAME='microservice'
+        env.DOCKERFILE_LOCATION='./docker/microservice/'
+
+        // The Environment comes from Jenkins. Add this variable to Jenkins
+        println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
+
 
         sh 'echo lsssssss'
         sh 'ls'
@@ -66,42 +71,29 @@ podTemplate(label: label, containers: [
          println "release Branch is ${BRANCH_NAME}"
         }
 
-        //stages
+        // Stages of the Deployment
 
-        //build
+        // Building the App
+        // Environments only qa( because you do not build the Image between the Environments)
         stage('Build') {
             container('java') {
-                    sh 'cat /etc/hosts'
-                    sh 'curl -k https://www.w3schools.com/angular/customers.php'
                     // TODO: 2/17/18 Enable tests
                     sh './gradlew clean build -x test'
-                    //sh 'ls'
-                    //sh "echo ${GIT_COMMIT_HASH}"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
             }
         }
 
 
 
-        //docker image build
+        // Dokerization of the App
+        // Environments only qa( because you do not build the Image between the Environments)
         stage('Dockerize') {
             container('docker') {
-                    sh 'ls build/libs'
+                    println "[Jenkinsfile INFO] Stage Dockerize starting..."
                     sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
-                    sh 'cp ./build/libs/microservice-0.0.1.jar ./docker/microservice/'
-                    sh "docker build -t microservice:${GIT_COMMIT_HASH} ./docker/microservice/"
+                    sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
                     sh 'docker images | grep microservice'
-
-
-                    //sh 'echo removingggggggggggggggg'
-                    //sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
-                    //sh 'docker images'
-
-
-                    //sh './gradlew clean build'
-                    //sh 'ls'
-                    //sh "echo ${GIT_COMMIT_HASH}"
-                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
+                    println "[Jenkinsfile INFO] Successfully Dockerized the App"
             }
         }
 
@@ -109,13 +101,13 @@ podTemplate(label: label, containers: [
         // Environments only qa( because you do not build the Image between the Environments)
         stage('Publish') {
             container('docker') {
-
+                    println "[Jenkinsfile INFO] Stage Publish starting..."
                     sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-
                     // Publish to Google Container Engine
                     withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
                         sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
+                    println "[Jenkinsfile INFO] Successfully published the Image to the Registry"
             }
         }
 
@@ -123,6 +115,7 @@ podTemplate(label: label, containers: [
         // Environments qa, staging & production
         stage('Deploy') {
             container('helm') {
+                    println "[Jenkinsfile INFO] Stage Deploy starting..."
                     sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
                     println "[Jenkinsfile INFO] Success"
                     sh 'helm list'
