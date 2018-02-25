@@ -83,6 +83,9 @@ podTemplate(label: label, containers: [
                     sh "docker build -t microservice:${GIT_COMMIT_HASH} ./docker/microservice/"
                     sh 'docker images | grep microservice'
                     sh "docker tag microservice:${GIT_COMMIT_HASH} gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    sh 'echo removingggggggggggggggg'
+                    sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    sh 'docker images'
                     withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
                         sh "docker push gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
                     }
@@ -117,30 +120,12 @@ podTemplate(label: label, containers: [
                         currentBuild.result = 'FAILURE'
                     } finally {
                             sh 'echo cleaninnnnnnng'
-                        }
+                            sh 'helm list'
+                    }
              }
 
         }
 
-        // Handle exceptions here
-        post {
-            always {
-                echo 'One way or another, I have finished'
-                deleteDir() /* clean up our workspace */
-            }
-            success {
-                echo 'I succeeeded!'
-            }
-            unstable {
-                echo 'I am unstable :/'
-            }
-            failure {
-                echo 'I failed :('
-            }
-            changed {
-                echo 'Things were different before...'
-            }
-        }
 
     }
 }
