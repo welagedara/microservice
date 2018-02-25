@@ -77,12 +77,31 @@ podTemplate(label: label, containers: [
 
 
         //docker image build
-        stage('Dockerize & Publish') {
+        stage('Dockerize') {
             container('docker') {
                     sh 'ls build/libs'
                     sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
                     sh 'cp ./build/libs/microservice-0.0.1.jar ./docker/microservice/'
                     sh "docker build -t microservice:${GIT_COMMIT_HASH} ./docker/microservice/"
+                    sh 'docker images | grep microservice'
+
+
+                    //sh 'echo removingggggggggggggggg'
+                    //sh "docker rmi gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
+                    //sh 'docker images'
+
+
+                    //sh './gradlew clean build'
+                    //sh 'ls'
+                    //sh "echo ${GIT_COMMIT_HASH}"
+                    //sh './gradlew -DSPRING_PROFILES_ACTIVE=dev clean build'
+            }
+        }
+
+        //docker image build
+        stage('Publish') {
+            container('docker') {
+
                     sh 'docker images | grep microservice'
                     sh "docker tag microservice:${GIT_COMMIT_HASH} gcr.io/kubernetes-195622/microservice:${GIT_COMMIT_HASH}"
 
