@@ -83,10 +83,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    def existentImage = sh(returnStdout: true, script: "docker images | grep ${DOCKER_IMAGE_NAME} | grep b671aab 2> /dev/null").trim()
-                    def nonExistentImage = sh(returnStdout: true, script: "docker images | grep ${DOCKER_IMAGE_NAME} | grep ${GIT_COMMIT_HASH} 2> /dev/null").trim()
-                    println existentImage
-                    println nonExistentImage
+                    sh "docker images | grep ${DOCKER_IMAGE_NAME}"
                     sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
                     sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
