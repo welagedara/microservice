@@ -90,7 +90,7 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     sh 'helm list'
-                    sh "helm install --name microservice ./helm/microservice/"
+                    sh "helm upgrade --install --name microservice ./helm/microservice/"
 
                     //sh './gradlew clean build'
                     //sh 'ls'
