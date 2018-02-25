@@ -17,9 +17,9 @@ podTemplate(label: label, containers: [
         git 'https://github.com/welagedara/microservice.git'
         env.MYTOOL_VERSION = '1.33'
 
-        sh "git rev-parse --short HEAD > commit-hash.txt"
-        env.GIT_COMMIT_HASH=readFile('commit-hash.txt').trim()
-
+        //sh "git rev-parse --short HEAD > commit-hash.txt"
+        //env.GIT_COMMIT_HASH=readFile('commit-hash.txt').trim()
+        env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
         println 'hash...'
         sh 'git rev-parse --short HEAD'
@@ -33,7 +33,7 @@ podTemplate(label: label, containers: [
           # do something
         fi
         */
-        
+
         println "Environment is ${KUBERNETES_ENVIRONMENT}"
 
         if (env.BRANCH_NAME =~ "PR-*" ) {
