@@ -16,7 +16,10 @@ podTemplate(label: label, containers: [
 
         git 'https://github.com/welagedara/microservice.git'
         env.MYTOOL_VERSION = '1.33'
-        env.GIT_COMMIT_HASH=library.getCommitHash()
+
+        sh "git rev-parse --short HEAD > commit-hash.txt"
+        env.GIT_COMMIT_HASH=readFile('commit-hash.txt').trim()
+
         env.GIT_CURRENT_BRANCH=library.getCurrentBranch()
         println 'hash...'
         sh 'git rev-parse --short HEAD'
@@ -90,8 +93,8 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     sh 'helm list'
-                    sh "helm upgrade --install --name microservice ./helm/microservice/"
-
+                    sh "helm upgrade --install ./helm/microservice/"
+                    sh 'helm list'
                     //sh './gradlew clean build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
