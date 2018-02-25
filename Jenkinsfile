@@ -67,6 +67,12 @@ podTemplate(label: label, containers: [
         stage('Dockerize & Publish') {
             container('docker') {
                     sh 'ls build/libs'
+                    sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
+                    sh 'cp ./build/libs/microservice-0.0.1.jar ./docker/microservice/'
+                    sh "docker build -t microservice:${GIT_COMMIT_HASH} ./docker/microservice/"
+                    sh 'docker images | grep microservice'
+
+
                     //sh './gradlew clean build'
                     //sh 'ls'
                     //sh "echo ${GIT_COMMIT_HASH}"
