@@ -1,5 +1,6 @@
 @Library('github.com/welagedara/pipeline-github-lib@master')
 
+// TODO: 2/17/18 Use this Library to externalize the build process
 def library = new com.example.Library()
 def label = "mypod-${UUID.randomUUID().toString()}"
 
@@ -31,45 +32,20 @@ podTemplate(label: label, containers: [
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
-        /*
-        if [[ "$(docker images -q myimage:mytag 2> /dev/null)" == "" ]]; then
-          # do something
-        fi
-
-        if (env.BRANCH_NAME =~ "PR-*" ) {
-            println "PR Branch is ${BRANCH_NAME}"
-        }
-        
-        if (env.BRANCH_NAME == "master" ) {
-            println "master Branch is ${BRANCH_NAME}"
-        }
-
-        if (env.BRANCH_NAME == "dev" ) {
-            println "dev Branch is ${BRANCH_NAME}"
-        }
-
-        if( env.BRANCH_NAME.startsWith("release-") ) {
-         println "release Branch is ${BRANCH_NAME}"
-        }
-        */
-
         // Stages of the Deployment
 
         // Prebuild
         // Here we check whether the App has been built before and is available
+
+        def passedBuilds = [];
+
+        lastSuccessfullBuild(currentBuild.getPreviousBuild(), passedBuilds);
+
         stage('Prebuild') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-
-
-                    GIT_COMMIT_EMAIL = sh (
-                        script: "docker images | grep -v -e ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} -e ${GIT_COMMIT_HASH} 2> /dev/null",
-                        returnStdout: true
-                    ).trim()
-
-                    echo "Git committer email: ${GIT_COMMIT_EMAIL}"
-
-                    println "[Jenkinsfile INFO] Successfully ran Prebuild"
+                    echo currentBuild.getPreviousBuild().result
+                    println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
 
@@ -81,7 +57,7 @@ podTemplate(label: label, containers: [
                     println "[Jenkinsfile INFO] Stage Build starting..."
                     // TODO: 2/17/18 Enable tests
                     sh './gradlew clean build -x test'
-                    println "[Jenkinsfile INFO] Successfully built the App"
+                    println "[Jenkinsfile INFO] Stage Build completed..."
             }
         }
 
@@ -95,7 +71,7 @@ podTemplate(label: label, containers: [
                     sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
                     sh 'docker images | grep microservice'
-                    println "[Jenkinsfile INFO] Successfully Dockerized the App"
+                    println "[Jenkinsfile INFO] Stage Dockerize completed..."
             }
         }
 
@@ -110,7 +86,7 @@ podTemplate(label: label, containers: [
                     withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
                         sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
-                    println "[Jenkinsfile INFO] Successfully published the Image to the Registry"
+                    println "[Jenkinsfile INFO] Stage Publish completed..."
             }
         }
 
@@ -121,7 +97,7 @@ podTemplate(label: label, containers: [
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
                     sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                    println "[Jenkinsfile INFO] Success"
+                    println "[Jenkinsfile INFO] Stage Deploy completed..."
                     sh 'helm list'
             }
         }
@@ -147,3 +123,28 @@ podTemplate(label: label, containers: [
 
     }
 }
+
+@NonCPS
+def lastSuccessfullBuild(build, passedBuilds) {
+    if(build != null){
+        if(build.result == 'SUCCESS') {
+            println build.displayName;
+            passedBuilds.add(build);
+
+            def changeLogSets = build.changeSets
+            for (int i = 0; i < changeLogSets.size(); i++) {
+                def entries = changeLogSets[i].items
+                for (int j = 0; j < entries.length; j++) {
+                    def entry = entries[j]
+                    echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+                    def files = new ArrayList(entry.affectedFiles)
+                    for (int k = 0; k < files.size(); k++) {
+                        def file = files[k]
+                        echo "  ${file.editType.name} ${file.path}"
+                    }
+                }
+            }
+        }
+        lastSuccessfullBuild(build.getPreviousBuild(), passedBuilds);
+    }
+ }
