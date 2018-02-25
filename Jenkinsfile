@@ -67,8 +67,6 @@ podTemplate(label: label, containers: [
             }
         }
 
-
-
         // Dokerization of the App
         // Environments qa and release( because you do not build the Image between the Environments)
         // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
