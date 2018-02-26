@@ -37,19 +37,19 @@ podTemplate(label: label, containers: [
         // Prebuild
         // Here we check whether the App has been built before and is available
 
-        def exists = false
+        def buildExists = false
         def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
         passedBuilds.each{ k, v ->
-            println "${k}:${v}"
             if (v == env.GIT_COMMIT_HASH ) {
-               exists = true;
+               buildExists = true;
             }
         }
 
         stage('Prebuild') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    println exists
+                    println buildExists
+                    // TODO: 2/17/18 Check if the Image exists locally or GCR
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
