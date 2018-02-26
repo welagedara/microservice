@@ -42,10 +42,10 @@ podTemplate(label: label, containers: [
         lastSuccessfullBuild(currentBuild.getPreviousBuild(), passedBuilds)
 
         println 'teoooooooooo'
-        
-        def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
 
-        passedBuilds.each{ k, v -> println "${k}:${v}" }
+        def passedBuilds2  = library.getSuccessfulBuildsMap(currentBuild)
+
+        passedBuilds2.each{ k, v -> println "${k}:${v}" }
 
         stage('Prebuild') {
             container('docker') {
