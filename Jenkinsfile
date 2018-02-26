@@ -43,15 +43,13 @@ podTemplate(label: label, containers: [
             println "${k}:${v}"
             if (v == env.GIT_COMMIT_HASH ) {
                exists = true;
-               println 'Exists....'
             }
         }
-
 
         stage('Prebuild') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-
+                    println exists
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
