@@ -37,9 +37,6 @@ podTemplate(label: label, containers: [
         // Prebuild
         // Here we check whether the App has been built before and is available
 
-        def passedBuilds = [];
-
-        lastSuccessfullBuild(currentBuild.getPreviousBuild(), passedBuilds)
 
         println 'teoooooooooo'
 
