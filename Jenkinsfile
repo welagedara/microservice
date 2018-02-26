@@ -37,17 +37,21 @@ podTemplate(label: label, containers: [
         // Prebuild
         // Here we check whether the App has been built before and is available
 
+        def exists = false
+        def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
+        passedBuilds.each{ k, v ->
+            println "${k}:${v}"
+            if (${v} == ${GIT_COMMIT_HASH}) {
+               exists = true;
+               println 'Exists....'
+            }
+        }
 
-        println 'teoooooooooo'
-
-        def passedBuilds2  = library.getSuccessfulBuildsMap(currentBuild)
-
-        passedBuilds2.each{ k, v -> println "${k}:${v}" }
 
         stage('Prebuild') {
             container('docker') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    echo currentBuild.getPreviousBuild().result
+
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
@@ -126,20 +130,3 @@ podTemplate(label: label, containers: [
 
     }
 }
-
-def lastSuccessfullBuild(build, passedBuilds) {
-    if(build != null){
-        if(build.result == 'SUCCESS') {
-            println build.displayName;
-            passedBuilds.add(build);
-            println commitHashForBuild(build.rawBuild)
-        }
-        lastSuccessfullBuild(build.getPreviousBuild(), passedBuilds);
-    }
- }
-
- @NonCPS
- def commitHashForBuild( build ) {
-   def scmAction = build?.actions.find { action -> action instanceof jenkins.scm.api.SCMRevisionAction }
-   return scmAction?.revision?.hash
- }
