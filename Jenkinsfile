@@ -37,9 +37,13 @@ podTemplate(label: label, containers: [
         // Prebuild
         // Here we check whether the App has been built before and is available
 
-        def passedBuilds = [];
+        //def passedBuilds = [];
 
-        lastSuccessfullBuild(currentBuild.getPreviousBuild(), passedBuilds);
+        //lastSuccessfullBuild(currentBuild.getPreviousBuild(), passedBuilds)
+
+        def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
+
+        passedBuilds.each{ k, v -> println "${k}:${v}" }
 
         stage('Prebuild') {
             container('docker') {
@@ -124,29 +128,12 @@ podTemplate(label: label, containers: [
     }
 }
 
-@NonCPS
 def lastSuccessfullBuild(build, passedBuilds) {
     if(build != null){
         if(build.result == 'SUCCESS') {
             println build.displayName;
             passedBuilds.add(build);
             println commitHashForBuild(build.rawBuild)
-
-            /*
-            def changeLogSets = build.changeSets
-            for (int i = 0; i < changeLogSets.size(); i++) {
-                def entries = changeLogSets[i].items
-                for (int j = 0; j < entries.length; j++) {
-                    def entry = entries[j]
-                    echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-                    def files = new ArrayList(entry.affectedFiles)
-                    for (int k = 0; k < files.size(); k++) {
-                        def file = files[k]
-                        echo "  ${file.editType.name} ${file.path}"
-                    }
-                }
-            }
-            */
         }
         lastSuccessfullBuild(build.getPreviousBuild(), passedBuilds);
     }
