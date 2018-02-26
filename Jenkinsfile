@@ -41,7 +41,7 @@ podTemplate(label: label, containers: [
         def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
         passedBuilds.each{ k, v ->
             println "${k}:${v}"
-            if (${v} == ${GIT_COMMIT_HASH}) {
+            if (v == env.GIT_COMMIT_HASH ) {
                exists = true;
                println 'Exists....'
             }
