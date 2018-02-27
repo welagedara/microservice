@@ -42,6 +42,8 @@ podTemplate(label: label, containers: [
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     env.SKIP_BUILD = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
+                    println 'valueee'
+                    println "${SKIP_BUILD}"
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
