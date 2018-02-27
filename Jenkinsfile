@@ -118,7 +118,7 @@ podTemplate(label: label, containers: [
                     // Find the Current Helm Revison for Rollbacks
                     def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
                     env.HELM_REVISON = helmString.split()[1]
-                    
+
                     try{
                         sh 'might fail'
                         sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
@@ -128,30 +128,13 @@ podTemplate(label: label, containers: [
                         // Rollback
                         println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
                         sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
+
+                        currentBuild.result = 'FAILURE'
                     }finally {
                         println "[Jenkinsfile INFO] Stage Deploy completed..."
                     }
             }
         }
-
-        /*
-        stage('Test') {
-            container('helm') {
-                try {
-                        sh 'might fail'
-                    } catch (err) {
-                        echo "Caught: ${err}"
-                        currentBuild.result = 'FAILURE'
-
-                    } finally {
-                            sh 'echo cleaninnnnnnng'
-                            sh 'helm list'
-                    }
-             }
-
-        }
-        */
-
-
+        
     }
 }
