@@ -116,7 +116,7 @@ podTemplate(label: label, containers: [
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
 
                     // Find the Current Helm Revison for Rollbacks
-                    def firstDeployment = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
                     if(firstDeployment == true) {
                         println '[Jenkinsfile INFO] First Deployment'
                     } else {
