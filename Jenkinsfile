@@ -54,7 +54,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     println "[Jenkinsfile INFO] Stage Build starting..."
-                    if(env.SKIP_BUILD) {
+                    if(env.SKIP_BUILD == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         // TODO: 2/17/18 Enable tests
@@ -70,7 +70,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    if(env.SKIP_BUILD) {
+                    if(env.SKIP_BUILD == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
@@ -87,7 +87,7 @@ podTemplate(label: label, containers: [
         stage('Publish') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
-                    if(env.SKIP_BUILD) {
+                    if(env.SKIP_BUILD == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
