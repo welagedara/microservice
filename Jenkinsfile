@@ -35,8 +35,8 @@ podTemplate(label: label, containers: [
 
 
         // Code checkout
-        git "${SOURCE_REPO}"
-        sh "git checkout ${BRANCH_NAME}"
+        //git "${SOURCE_REPO}"
+        //sh "git checkout ${BRANCH_NAME}"
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
