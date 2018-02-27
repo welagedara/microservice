@@ -74,7 +74,6 @@ podTemplate(label: label, containers: [
                         sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
                         sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
                         sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
-                        sh 'docker images | grep microservice'
                     }
                     println "[Jenkinsfile INFO] Stage Dockerize completed..."
             }
@@ -106,7 +105,6 @@ podTemplate(label: label, containers: [
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
                     sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                    sh 'helm list'
                     println "[Jenkinsfile INFO] Stage Deploy completed..."
             }
         }
