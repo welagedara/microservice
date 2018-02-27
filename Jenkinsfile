@@ -45,19 +45,7 @@ podTemplate(label: label, containers: [
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
-                    println shellCommand
-                    sh shellCommand
-                    println sh(returnStdout: true, script: shellCommand).trim().toInteger()
-                    println sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
                     env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
-                    println "skip build or not ${SKIP_BUILD}"
-
-                    if((env.SKIP_BUILD).toBoolean() == true) {
-                        println 'this is true'
-                    }else {
-                        println 'this is false'
-                    }
-
             }
 
             container('helm') {
@@ -84,7 +72,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     println "[Jenkinsfile INFO] Stage Build starting..."
-                    if(env.SKIP_BUILD == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         // TODO: 2/17/18 Enable tests
@@ -100,7 +88,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    if(env.SKIP_BUILD == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
@@ -117,7 +105,7 @@ podTemplate(label: label, containers: [
         stage('Publish') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
-                    if(env.SKIP_BUILD == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
