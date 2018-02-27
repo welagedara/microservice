@@ -38,12 +38,31 @@ podTemplate(label: label, containers: [
         // Stages of the Deployment
 
         // Prebuild
-        // Here we check whether the App has been built before and is available
+        // Here we check whether the App has been built before and an Image available
+        // Also we make a note of the Helm Revison for Rollbacks
         stage('Prebuild') {
+
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    env.SKIP_BUILD = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
+                    sh "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH}"
+                    sh "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
+                    env.SKIP_BUILD = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
+            }
+
+            container('helm') {
+                    // Find the Current Helm Revison for Rollbacks
+                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                    if(firstDeployment == true) {
+                        println '[Jenkinsfile INFO] First Deployment'
+                    } else {
+                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
+                        def splittedHelmString = helmString.split();
+                        if(splittedHelmString.length > 2) {
+                            println '[Jenkinsfile INFO] Not the first Deployment'
+                            env.HELM_REVISON = helmString.split()[1]
+                        }
+                    }
             }
         }
 
@@ -114,19 +133,6 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
-
-                    // Find the Current Helm Revison for Rollbacks
-                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
-                    if(firstDeployment == true) {
-                        println '[Jenkinsfile INFO] First Deployment'
-                    } else {
-                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
-                        def splittedHelmString = helmString.split();
-                        if(splittedHelmString.length > 2) {
-                            println '[Jenkinsfile INFO] Not the first Deployment'
-                            env.HELM_REVISON = helmString.split()[1]
-                        }
-                    }
 
                     // Deploying the App
                     try{
