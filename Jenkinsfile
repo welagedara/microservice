@@ -116,7 +116,8 @@ podTemplate(label: label, containers: [
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
 
                     // Find the Current Helm Revison for Rollbacks
-                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                    // def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep asdsadsad; then echo 0; else echo 1; fi").trim().toBoolean() // Delete and uncomment
                     if(firstDeployment == true) {
                         println '[Jenkinsfile INFO] First Deployment'
                     } else {
@@ -129,6 +130,7 @@ podTemplate(label: label, containers: [
                     }
 
                     try{
+                        sh 'saasfasf errorr' // delete
                         sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
                         sh 'helm list'
                         println "[Jenkinsfile INFO] Deployment success..."
