@@ -41,7 +41,9 @@ podTemplate(label: label, containers: [
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     println sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim()
-                    // TODO: 2/17/18 Check if the Image exists locally or Google Container Registry
+                    if(sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0) {
+                        println 'trueeeeee'
+                    }
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
@@ -80,9 +82,7 @@ podTemplate(label: label, containers: [
                     println "[Jenkinsfile INFO] Stage Publish starting..."
                     sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     // Publish to Google Container Registry
-                    withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                        sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-                    }
+                    sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     println "[Jenkinsfile INFO] Stage Publish completed..."
             }
         }
