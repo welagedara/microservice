@@ -50,6 +50,8 @@ podTemplate(label: label, containers: [
                     println sh(returnStdout: true, script: shellCommand).trim().toInteger()
                     println sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
                     env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
+                    println "skip build or not ${SKIP_BUILD}"
+
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
 
