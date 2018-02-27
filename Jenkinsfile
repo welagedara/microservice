@@ -20,6 +20,7 @@ podTemplate(label: label, containers: [
         env.SOURCE_REPO='https://github.com/welagedara/microservice.git'
         env.CHART_LOCATION='./helm/microservice/'
         env.HELM_NAME = 'microservice'
+        env.HELM_REVISON=''
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
         env.DOCKER_IMAGE_NAME='microservice'
         env.DOCKERFILE_LOCATION='./docker/microservice/'
@@ -102,10 +103,7 @@ podTemplate(label: label, containers: [
         stage('Dry Run') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Dry Run starting..."
-                    sh 'helm list'
-                    //sh "helm install --debug --dry-run ${CHART_LOCATION}"
                     sh "helm upgrade --install --debug --dry-run --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                    sh 'helm list'
                     println "[Jenkinsfile INFO] Stage Dry Run completed..."
             }
         }
@@ -116,9 +114,21 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
-                    sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                    sh 'helm list'
-                    println "[Jenkinsfile INFO] Stage Deploy completed..."
+                    try{
+                        // Find the Current Helm Revison for Rollbacks
+                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
+                        env.HELM_REVISON = helmString.split()[1]
+
+                        sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                        sh 'helm list'
+                        println "[Jenkinsfile INFO] Deployment success..."
+                    }catch (err) {
+                        // Rollback
+                        println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
+                        sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
+                    }finally {
+                        println "[Jenkinsfile INFO] Stage Deploy completed..."
+                    }
             }
         }
 
