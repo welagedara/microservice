@@ -49,7 +49,7 @@ podTemplate(label: label, containers: [
                     sh shellCommand
                     println sh(returnStdout: true, script: shellCommand).trim().toInteger()
                     println sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
-                    env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
+                    env.SKIP_BUILD = (sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0).toBoolean()
                     println "skip build or not ${SKIP_BUILD}"
 
                     if(env.SKIP_BUILD == true) {
