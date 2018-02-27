@@ -114,11 +114,13 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
-                    try{
-                        // Find the Current Helm Revison for Rollbacks
-                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
-                        env.HELM_REVISON = helmString.split()[1]
 
+                    // Find the Current Helm Revison for Rollbacks
+                    def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
+                    env.HELM_REVISON = helmString.split()[1]
+                    
+                    try{
+                        sh 'might fail'
                         sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
                         sh 'helm list'
                         println "[Jenkinsfile INFO] Deployment success..."
