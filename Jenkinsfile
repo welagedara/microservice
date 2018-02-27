@@ -23,6 +23,7 @@ podTemplate(label: label, containers: [
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
         env.DOCKER_IMAGE_NAME='microservice'
         env.DOCKERFILE_LOCATION='./docker/microservice/'
+        env.IMAGE_EXISTS=false // This is to make sure we do not build the image if it exists
 
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
@@ -40,10 +41,16 @@ podTemplate(label: label, containers: [
         stage('Prebuild') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
+                    env.IMAGE_EXISTS = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
+                    println "Image exists ${IMAGE_EXISTS}"
+
                     println sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim()
+
                     if(sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0) {
                         println 'trueeeeee'
                     }
+
+
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
