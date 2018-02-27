@@ -116,25 +116,36 @@ podTemplate(label: label, containers: [
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
 
                     // Find the Current Helm Revison for Rollbacks
-                    def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
-                    env.HELM_REVISON = helmString.split()[1]
+                    def firstDeployment = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                    if(firstDeployment == true) {
+                        println '[Jenkinsfile INFO] First Deployment'
+                    } else {
+                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
+                        def splittedHelmString = helmString.split();
+                        if(splittedHelmString.length > 2) {
+                            println '[Jenkinsfile INFO] Not the first Deployment'
+                            env.HELM_REVISON = helmString.split()[1]
+                        }
+                    }
 
                     try{
-                        sh 'might fail'
                         sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
                         sh 'helm list'
                         println "[Jenkinsfile INFO] Deployment success..."
                     }catch (err) {
-                        // Rollback
-                        println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
-                        sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
-
+                        if (env.HELM_REVISON != '') {
+                            // Rollback
+                            println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
+                            sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
+                        } else {
+                            println "[Jenkinsfile INFO] Something went wrong.  No rolling back since this is the first Deployment..."
+                        }
                         currentBuild.result = 'FAILURE'
                     }finally {
                         println "[Jenkinsfile INFO] Stage Deploy completed..."
                     }
             }
         }
-        
+
     }
 }
