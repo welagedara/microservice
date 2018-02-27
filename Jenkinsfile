@@ -6,7 +6,8 @@ def label = "mypod-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
     containerTemplate(name: 'java', image: 'airdock/oracle-jdk:1.8', ttyEnabled: true, command: 'cat'),
-    containerTemplate(name: 'docker', image: 'docker:1.12.6', command: 'cat', ttyEnabled: true),
+    // Below image has Docker
+    containerTemplate(name: 'gcloud', image: 'google/cloud-sdk', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
   ],
   volumes:[
@@ -36,20 +37,11 @@ podTemplate(label: label, containers: [
 
         // Prebuild
         // Here we check whether the App has been built before and is available
-
-        def buildExists = false
-        def passedBuilds  = library.getSuccessfulBuildsMap(currentBuild)
-        passedBuilds.each{ k, v ->
-            if (v == env.GIT_COMMIT_HASH ) {
-               buildExists = true;
-            }
-        }
-
         stage('Prebuild') {
-            container('docker') {
+            container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    println buildExists
-                    // TODO: 2/17/18 Check if the Image exists locally or GCR
+                    println sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim()
+                    // TODO: 2/17/18 Check if the Image exists locally or Google Container Registry
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
@@ -70,7 +62,7 @@ podTemplate(label: label, containers: [
         // Environments qa and release( because you do not build the Image between the Environments)
         // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Dockerize') {
-            container('docker') {
+            container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
                     sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
                     sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
@@ -84,7 +76,7 @@ podTemplate(label: label, containers: [
         // Environments qa and release( because you do not build the Image between the Environments)
         // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Publish') {
-            container('docker') {
+            container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
                     sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     // Publish to Google Container Registry
