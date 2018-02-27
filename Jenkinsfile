@@ -115,6 +115,7 @@ podTemplate(label: label, containers: [
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
                     sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                    sh 'helm list'
                     println "[Jenkinsfile INFO] Stage Deploy completed..."
             }
         }
