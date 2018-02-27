@@ -90,9 +90,9 @@ podTemplate(label: label, containers: [
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                         // Publish to Google Container Registry
-                        withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                            sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-                        }
+                        //withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
+                            //sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
+                        //}
                         sh "gcloud docker -- push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
                     println "[Jenkinsfile INFO] Stage Publish completed..."
