@@ -90,12 +90,21 @@ podTemplate(label: label, containers: [
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                         // Publish to Google Container Registry
-                        //withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                            //sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-                        //}
                         sh "gcloud docker -- push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
                     }
                     println "[Jenkinsfile INFO] Stage Publish completed..."
+            }
+        }
+
+        // Dry run
+        // Environments qa, staging & production
+        // Branches dev, release & master
+        stage('Dry Run') {
+            container('helm') {
+                    println "[Jenkinsfile INFO] Stage Dry Run starting..."
+                    sh "helm upgrade --dry-run --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                    sh 'helm list'
+                    println "[Jenkinsfile INFO] Stage Dry Run completed..."
             }
         }
 
