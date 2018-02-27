@@ -47,8 +47,8 @@ podTemplate(label: label, containers: [
                     def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
                     println shellCommand
                     sh shellCommand
-                    // sh "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
-                    env.SKIP_BUILD = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
+
+                    env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
 
