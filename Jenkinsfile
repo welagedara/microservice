@@ -31,7 +31,7 @@ podTemplate(label: label, containers: [
 
         // Code checkout
         checkout scm
-        sh 'git status'
+        sh 'git status' // Print status
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
