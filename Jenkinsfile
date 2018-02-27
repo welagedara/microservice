@@ -23,7 +23,7 @@ podTemplate(label: label, containers: [
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
         env.DOCKER_IMAGE_NAME='microservice'
         env.DOCKERFILE_LOCATION='./docker/microservice/'
-        env.IMAGE_EXISTS=false // This is to make sure we do not build the image if it exists
+        env.SKIP_BUILD=false // This is to make sure we do not build the image if it exists
 
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
@@ -41,16 +41,7 @@ podTemplate(label: label, containers: [
         stage('Prebuild') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    env.IMAGE_EXISTS = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
-                    println "Image exists ${IMAGE_EXISTS}"
-
-                    println sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim()
-
-                    if(sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0) {
-                        println 'trueeeeee'
-                    }
-
-
+                    env.SKIP_BUILD = sh(returnStdout: true, script: "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999| grep ${GIT_COMMIT_HASH} | wc -l").trim().toInteger() > 0
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
@@ -61,8 +52,12 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     println "[Jenkinsfile INFO] Stage Build starting..."
-                    // TODO: 2/17/18 Enable tests
-                    sh './gradlew clean build -x test'
+                    if(env.SKIP_BUILD) {
+                        println '[Jenkinsfile INFO] Skipped'
+                    }else {
+                        // TODO: 2/17/18 Enable tests
+                        sh './gradlew clean build -x test'
+                    }
                     println "[Jenkinsfile INFO] Stage Build completed..."
             }
         }
@@ -73,10 +68,14 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
-                    sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
-                    sh 'docker images | grep microservice'
+                    if(env.SKIP_BUILD) {
+                        println '[Jenkinsfile INFO] Skipped'
+                    }else {
+                        sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
+                        sh "cp ./build/libs/microservice-0.0.1.jar ${DOCKERFILE_LOCATION}"
+                        sh "docker build -t ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKERFILE_LOCATION}"
+                        sh 'docker images | grep microservice'
+                    }
                     println "[Jenkinsfile INFO] Stage Dockerize completed..."
             }
         }
@@ -87,10 +86,14 @@ podTemplate(label: label, containers: [
         stage('Publish') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
-                    // Publish to Google Container Registry
-                    withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
-                        sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
+                    if(env.SKIP_BUILD) {
+                        println '[Jenkinsfile INFO] Skipped'
+                    }else {
+                        sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
+                        // Publish to Google Container Registry
+                        withDockerRegistry([credentialsId: 'gcr:Kubernetes', url: 'https://gcr.io']) {
+                            sh "docker push ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
+                        }
                     }
                     println "[Jenkinsfile INFO] Stage Publish completed..."
             }
@@ -103,8 +106,8 @@ podTemplate(label: label, containers: [
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
                     sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                    println "[Jenkinsfile INFO] Stage Deploy completed..."
                     sh 'helm list'
+                    println "[Jenkinsfile INFO] Stage Deploy completed..."
             }
         }
 
