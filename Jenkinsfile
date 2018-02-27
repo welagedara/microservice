@@ -29,14 +29,9 @@ podTemplate(label: label, containers: [
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
-        // Fixing checkout issues
+        // Code checkout
         checkout scm
         sh 'git status'
-
-
-        // Code checkout
-        //git "${SOURCE_REPO}"
-        //sh "git checkout ${BRANCH_NAME}"
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
