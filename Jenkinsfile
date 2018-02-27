@@ -102,6 +102,7 @@ podTemplate(label: label, containers: [
         stage('Dry Run') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Dry Run starting..."
+                    sh 'helm list'
                     sh "helm install --debug --dry-run ${CHART_LOCATION}"
                     sh 'helm list'
                     println "[Jenkinsfile INFO] Stage Dry Run completed..."
