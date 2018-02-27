@@ -29,6 +29,11 @@ podTemplate(label: label, containers: [
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
+        // Fixing checkout issues
+        checkout scm
+        sh 'git status'
+
+
         // Code checkout
         git "${SOURCE_REPO}"
         sh "git checkout ${BRANCH_NAME}"
