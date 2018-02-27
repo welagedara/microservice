@@ -52,7 +52,12 @@ podTemplate(label: label, containers: [
                     env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
                     println "skip build or not ${SKIP_BUILD}"
 
-                    println "[Jenkinsfile INFO] Stage Prebuild completed..."
+                    if(env.SKIP_BUILD == true) {
+                        println 'this is true'
+                    }else {
+                        println 'this is false'
+                    }
+
             }
 
             container('helm') {
@@ -68,6 +73,8 @@ podTemplate(label: label, containers: [
                             env.HELM_REVISON = helmString.split()[1]
                         }
                     }
+
+                    println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
 
