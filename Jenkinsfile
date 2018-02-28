@@ -50,6 +50,15 @@ podTemplate(label: label, containers: [
         // Also we make a note of the Helm Revison for Rollbacks
         stage('Prebuild') {
 
+            // Remove if not needed
+            library.setEnvironmentVariables()
+
+            println 'Skip Stage Variables'
+            println "${SKIP_STAGE_BUILD}"
+            println "${SKIP_STAGE_DOCKERIZE}"
+            println "${SKIP_STAGE_PUBLISH}"
+            println "${SKIP_STAGE_PUBLISH}"
+            println "${SKIP_STAGE_DEPLOY}"
 
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
