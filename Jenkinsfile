@@ -37,6 +37,7 @@ podTemplate(label: label, containers: [
         env.SKIP_BUILD=false // This is to make sure we do not build the image if it exists
 
         // Pick the stages you want to execute. Set ENVIRONMENT in Jenkins
+        env.SKIP_STAGE_PREBUILD=false
         env.SKIP_STAGE_BUILD=false
         env.SKIP_STAGE_DOCKERIZE=false
         env.SKIP_STAGE_PUBLISH=false
@@ -54,6 +55,7 @@ podTemplate(label: label, containers: [
             library.setEnvironmentVariables()
 
             println 'Skip Stage Variables'
+            println "${SKIP_STAGE_PREBUILD}"
             println "${SKIP_STAGE_BUILD}"
             println "${SKIP_STAGE_DOCKERIZE}"
             println "${SKIP_STAGE_PUBLISH}"
@@ -62,24 +64,31 @@ podTemplate(label: label, containers: [
 
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
-                    env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
+                    if((env.SKIP_STAGE_PREBUILD).toBoolean() == true) {
+                        println '[Jenkinsfile INFO] Skipped Image Check'
+                    }else {
+                        def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
+                        env.SKIP_BUILD = sh(returnStdout: true, script: shellCommand).trim().toInteger() > 0
+                    }
             }
 
             container('helm') {
-                    // Find the Current Helm Revison for Rollbacks
-                    def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
-                    if(firstDeployment == true) {
-                        println '[Jenkinsfile INFO] First Deployment'
-                    } else {
-                        def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
-                        def splittedHelmString = helmString.split();
-                        if(splittedHelmString.length > 2) {
-                            println '[Jenkinsfile INFO] Not the first Deployment'
-                            env.HELM_REVISON = helmString.split()[1]
+                    if((env.SKIP_STAGE_PREBUILD).toBoolean() == true) {
+                        println '[Jenkinsfile INFO] Skipped Revision Check'
+                    }else {
+                        // Find the Current Helm Revison for Rollbacks
+                        def firstDeployment = sh(returnStdout: true, script: "if helm list | grep ${HELM_NAME}; then echo 0; else echo 1; fi").trim().toBoolean()
+                        if(firstDeployment == true) {
+                            println '[Jenkinsfile INFO] First Deployment'
+                        } else {
+                            def helmString = sh(returnStdout: true, script: "helm list | grep ${HELM_NAME}").trim()
+                            def splittedHelmString = helmString.split();
+                            if(splittedHelmString.length > 2) {
+                                println '[Jenkinsfile INFO] Not the first Deployment'
+                                env.HELM_REVISON = helmString.split()[1]
+                            }
                         }
                     }
-
                     println "[Jenkinsfile INFO] Stage Prebuild completed..."
             }
         }
@@ -169,7 +178,7 @@ podTemplate(label: label, containers: [
                                 println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
                                 sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
                             } else {
-                                println "[Jenkinsfile INFO] Something went wrong.  No rolling back since this is the first Deployment..."
+                                println "[Jenkinsfile INFO] No rolling back since this is the first Deployment..."
                             }
                             currentBuild.result = 'FAILURE'
                         }finally {
