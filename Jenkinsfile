@@ -37,7 +37,8 @@ podTemplate(label: label, containers: [
         env.SKIP_BUILD=false // This is to make sure we do not build the image if it exists
 
         // Pick the stages you want to execute. Set ENVIRONMENT in Jenkins
-        env.SKIP_STAGE_PREBUILD=false
+        env.SKIP_STAGE_PREBUILD_GCLOUD=false
+        env.SKIP_STAGE_PREBUILD_HELM=false
         env.SKIP_STAGE_BUILD=false
         env.SKIP_STAGE_DOCKERIZE=false
         env.SKIP_STAGE_PUBLISH=false
@@ -55,7 +56,8 @@ podTemplate(label: label, containers: [
             library.setEnvironmentVariables()
 
             println 'Skip Stage Variables'
-            println "${SKIP_STAGE_PREBUILD}"
+            println "${SKIP_STAGE_PREBUILD_GCLOUD}"
+            println "${SKIP_STAGE_PREBUILD_HELM}"
             println "${SKIP_STAGE_BUILD}"
             println "${SKIP_STAGE_DOCKERIZE}"
             println "${SKIP_STAGE_PUBLISH}"
@@ -64,7 +66,7 @@ podTemplate(label: label, containers: [
 
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
-                    if((env.SKIP_STAGE_PREBUILD).toBoolean() == true) {
+                    if((env.SKIP_STAGE_PREBUILD_GCLOUD).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped Image Check'
                     }else {
                         def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
@@ -73,7 +75,7 @@ podTemplate(label: label, containers: [
             }
 
             container('helm') {
-                    if((env.SKIP_STAGE_PREBUILD).toBoolean() == true) {
+                    if((env.SKIP_STAGE_PREBUILD_HELM).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped Revision Check'
                     }else {
                         // Find the Current Helm Revison for Rollbacks
