@@ -42,6 +42,8 @@ podTemplate(label: label, containers: [
         // Also we make a note of the Helm Revison for Rollbacks
         stage('Prebuild') {
 
+
+
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
@@ -83,7 +85,7 @@ podTemplate(label: label, containers: [
         }
 
         // Dokerization of the App
-        // Environments qa and release( because you do not build the Image between the Environments)
+        // Environments qa and staging( because you do not build the Image between the Environments)
         // Branches dev & release. When you merge the release Branch to dev Branch things get tricky
         stage('Dockerize') {
             container('gcloud') {
