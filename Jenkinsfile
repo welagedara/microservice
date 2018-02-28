@@ -6,7 +6,7 @@ def label = "mypod-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
     containerTemplate(name: 'java', image: 'airdock/oracle-jdk:1.8', ttyEnabled: true, command: 'cat'),
-    // Below image has Docker
+    // GCloud Image has Docker
     containerTemplate(name: 'gcloud', image: 'google/cloud-sdk', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.7.2', command: 'cat', ttyEnabled: true)
   ],
