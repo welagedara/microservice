@@ -50,7 +50,7 @@ podTemplate(label: label, containers: [
         // Also we make a note of the Helm Revison for Rollbacks
         stage('Prebuild') {
 
-            
+
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
@@ -81,7 +81,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     println "[Jenkinsfile INFO] Stage Build starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_BUILD).toBoolean == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_BUILD).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         // TODO: 2/17/18 Enable tests
@@ -97,7 +97,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_DOCKERIZE).toBoolean == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_DOCKERIZE).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
@@ -114,7 +114,7 @@ podTemplate(label: label, containers: [
         stage('Publish') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_PUBLISH).toBoolean == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_PUBLISH).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
@@ -131,7 +131,7 @@ podTemplate(label: label, containers: [
         stage('Dry Run') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Dry Run starting..."
-                    if((env.SKIP_STAGE_DRY_RUN).toBoolean == true) {
+                    if((env.SKIP_STAGE_DRY_RUN).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh "helm upgrade --install --debug --dry-run --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
@@ -146,7 +146,7 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
-                    if((env.SKIP_STAGE_DEPLOY).toBoolean == true) {
+                    if((env.SKIP_STAGE_DEPLOY).toBoolean() == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         // Deploying the App
