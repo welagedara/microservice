@@ -24,7 +24,6 @@ podTemplate(label: label, containers: [
         env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
         env.DOCKER_IMAGE_NAME='microservice'
         env.DOCKERFILE_LOCATION='./docker/microservice/'
-        env.SKIP_BUILD=false // This is to make sure we do not build the image if it exists
 
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
@@ -35,6 +34,15 @@ podTemplate(label: label, containers: [
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
+        env.SKIP_BUILD=false // This is to make sure we do not build the image if it exists
+
+        // Pick the stages you want to execute. Set ENVIRONMENT in Jenkins
+        env.SKIP_STAGE_BUILD=false
+        env.SKIP_STAGE_DOCKERIZE=false
+        env.SKIP_STAGE_PUBLISH=false
+        env.SKIP_STAGE_DRY_RUN=false
+        env.SKIP_STAGE_DEPLOY=false
+
         // Stages of the Deployment
 
         // Prebuild
@@ -42,8 +50,7 @@ podTemplate(label: label, containers: [
         // Also we make a note of the Helm Revison for Rollbacks
         stage('Prebuild') {
 
-
-
+            
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Prebuild starting..."
                     def shellCommand = "gcloud container images list-tags ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --limit 9999 | grep ${GIT_COMMIT_HASH} | wc -l"
@@ -74,7 +81,7 @@ podTemplate(label: label, containers: [
         stage('Build') {
             container('java') {
                     println "[Jenkinsfile INFO] Stage Build starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_BUILD).toBoolean == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         // TODO: 2/17/18 Enable tests
@@ -90,7 +97,7 @@ podTemplate(label: label, containers: [
         stage('Dockerize') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Dockerize starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_DOCKERIZE).toBoolean == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh 'rm ./docker/microservice/microservice-0.0.1.jar 2>/dev/null'
@@ -107,7 +114,7 @@ podTemplate(label: label, containers: [
         stage('Publish') {
             container('gcloud') {
                     println "[Jenkinsfile INFO] Stage Publish starting..."
-                    if((env.SKIP_BUILD).toBoolean() == true) {
+                    if((env.SKIP_BUILD).toBoolean() == true || (env.SKIP_STAGE_PUBLISH).toBoolean == true) {
                         println '[Jenkinsfile INFO] Skipped'
                     }else {
                         sh "docker tag ${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH} ${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME}:${GIT_COMMIT_HASH}"
@@ -124,7 +131,11 @@ podTemplate(label: label, containers: [
         stage('Dry Run') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Dry Run starting..."
-                    sh "helm upgrade --install --debug --dry-run --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                    if((env.SKIP_STAGE_DRY_RUN).toBoolean == true) {
+                        println '[Jenkinsfile INFO] Skipped'
+                    }else {
+                        sh "helm upgrade --install --debug --dry-run --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                    }
                     println "[Jenkinsfile INFO] Stage Dry Run completed..."
             }
         }
@@ -135,24 +146,28 @@ podTemplate(label: label, containers: [
         stage('Deploy') {
             container('helm') {
                     println "[Jenkinsfile INFO] Stage Deploy starting..."
-
-                    // Deploying the App
-                    try{
-                        sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
-                        sh 'helm list'
-                        println "[Jenkinsfile INFO] Deployment success..."
-                    }catch (err) {
-                        if (env.HELM_REVISON != '') {
-                            // Rollback
-                            println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
-                            sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
-                        } else {
-                            println "[Jenkinsfile INFO] Something went wrong.  No rolling back since this is the first Deployment..."
+                    if((env.SKIP_STAGE_DEPLOY).toBoolean == true) {
+                        println '[Jenkinsfile INFO] Skipped'
+                    }else {
+                        // Deploying the App
+                        try{
+                            sh "helm upgrade --install --set image.repository=${DOCKER_REPOSITORY}${DOCKER_IMAGE_NAME} --set image.tag=${GIT_COMMIT_HASH} ${HELM_NAME} ${CHART_LOCATION}"
+                            sh 'helm list'
+                            println "[Jenkinsfile INFO] Deployment success..."
+                        }catch (err) {
+                            if (env.HELM_REVISON != '') {
+                                // Rollback
+                                println "[Jenkinsfile INFO] Something went wrong.  Rolling back..."
+                                sh "helm rollback ${HELM_NAME} ${HELM_REVISON}"
+                            } else {
+                                println "[Jenkinsfile INFO] Something went wrong.  No rolling back since this is the first Deployment..."
+                            }
+                            currentBuild.result = 'FAILURE'
+                        }finally {
+                            println "[Jenkinsfile INFO] Deploying the App is done..."
                         }
-                        currentBuild.result = 'FAILURE'
-                    }finally {
-                        println "[Jenkinsfile INFO] Stage Deploy completed..."
                     }
+                    println "[Jenkinsfile INFO] Stage Deploy completed..."
             }
         }
 
