@@ -19,12 +19,12 @@ podTemplate(label: label, containers: [
         def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
 
         // Environment Variables
-        env.CHART_LOCATION='./helm/microservice/'
-        env.HELM_NAME = 'microservice'
+        env.CHART_LOCATION=jenkinsfileConfig.chart_location
+        env.HELM_NAME = jenkinsfileConfig.helm_name
         env.HELM_REVISON=''
-        env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
-        env.DOCKER_IMAGE_NAME='microservice'
-        env.DOCKERFILE_LOCATION='./docker/microservice/'
+        env.DOCKER_REPOSITORY=jenkinsfileConfig.docker_repository
+        env.DOCKER_IMAGE_NAME=jenkinsfileConfig.docker_image_name
+        env.DOCKERFILE_LOCATION=jenkinsfileConfig.dockerfile_location
 
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
