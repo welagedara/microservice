@@ -1,0 +1,7 @@
+{
+  "chart_location": "./helm/microservice/",
+  "helm_name": "microservice",
+  "docker_repository": "gcr.io/kubernetes-195622/",
+  "docker_image_name": "microservice",
+  "dockerfile_location": "./docker/microservice/"
+}

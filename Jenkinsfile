@@ -16,21 +16,26 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
+        // Code checkout
+        checkout scm
+        sh 'git status' // Print status to see the Commit Hash
+
+        def jenkinsfileConfigJson  = readFile('Jenkinsfile.json')
+        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigJson)
+
+        println "pipeline config ==> ${jenkinsfileConfig}"
+
         // Environment Variables
-        env.SOURCE_REPO='https://github.com/welagedara/microservice.git'
-        env.CHART_LOCATION='./helm/microservice/'
-        env.HELM_NAME = 'microservice'
+        env.CHART_LOCATION=jenkinsfileConfig.chart_location
+        env.HELM_NAME = jenkinsfileConfig.helm_name
         env.HELM_REVISON=''
-        env.DOCKER_REPOSITORY='gcr.io/kubernetes-195622/'
-        env.DOCKER_IMAGE_NAME='microservice'
-        env.DOCKERFILE_LOCATION='./docker/microservice/'
+        env.DOCKER_REPOSITORY=jenkinsfileConfig.docker_repository
+        env.DOCKER_IMAGE_NAME=jenkinsfileConfig.docker_image_name
+        env.DOCKERFILE_LOCATION=jenkinsfileConfig.dockerfile_location
 
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
-        // Code checkout
-        checkout scm
-        sh 'git status' // Print status
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
