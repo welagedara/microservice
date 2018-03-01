@@ -16,7 +16,9 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
-        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
+
+        def jenkinsfileConfigFile = readFile('Jenkinsfile.json')
+        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigFile)
 
         println "pipeline config ==> ${jenkinsfileConfig}"
 
