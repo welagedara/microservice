@@ -20,10 +20,7 @@ podTemplate(label: label, containers: [
         checkout scm
         sh 'git status' // Print status
 
-        sh 'ls'
-
-        def jenkinsfileConfigJson  = readFile('Jenkinsfile.json')
-        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigJson)
+        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
 
         println "pipeline config ==> ${jenkinsfileConfig}"
 
