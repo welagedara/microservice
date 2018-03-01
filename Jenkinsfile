@@ -16,10 +16,11 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
-        sh 'ls'
+        // Code checkout
+        checkout scm
+        sh 'git status' // Print status
 
-        def jenkinsfileConfigFile = readFile('Jenkinsfile.json')
-        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigFile)
+        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
 
         println "pipeline config ==> ${jenkinsfileConfig}"
 
@@ -34,9 +35,6 @@ podTemplate(label: label, containers: [
         // The Environment comes from Jenkins. Add this variable to Jenkins
         println "[Jenkinsfile INFO] Current Environment is ${ENVIRONMENT}"
 
-        // Code checkout
-        checkout scm
-        sh 'git status' // Print status
         env.GIT_COMMIT_HASH=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT_HASH}"
 
