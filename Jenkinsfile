@@ -18,8 +18,8 @@ podTemplate(label: label, containers: [
 
         def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
 
-        println jenkinsfileConfig.chart_location
-        
+        println "pipeline config ==> ${jenkinsfileConfig}"
+
         // Environment Variables
         env.CHART_LOCATION=jenkinsfileConfig.chart_location
         env.HELM_NAME = jenkinsfileConfig.helm_name
