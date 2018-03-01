@@ -18,7 +18,7 @@ podTemplate(label: label, containers: [
 
         // Code checkout
         checkout scm
-        sh 'git status' // Print status
+        sh 'git status' // Print status to see the Commit Hash
 
         def jenkinsfileConfigJson  = readFile('Jenkinsfile.json')
         def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigJson)
