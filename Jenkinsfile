@@ -16,8 +16,9 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
+        def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(readFile('Jenkinsfile.json'))
+
         // Environment Variables
-        env.SOURCE_REPO='https://github.com/welagedara/microservice.git'
         env.CHART_LOCATION='./helm/microservice/'
         env.HELM_NAME = 'microservice'
         env.HELM_REVISON=''
