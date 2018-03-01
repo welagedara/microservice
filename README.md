@@ -1,5 +1,16 @@
 # microservice
 
+## Screenshots
+
+Activity Page
+![Alt text](/images/14.png?raw=true "Activity")
+
+A Pull Request Build in Staging Environment
+![Alt text](/images/12.png?raw=true "PR")
+
+Continuous Integration System notification to GitHub on a successful PR build.
+![Alt text](/images/11.png?raw=true "GitHub")
+
 ## Deploying on Docker
 
 Create Docker Machine. Use this only if you have Docker Machine installed.
@@ -82,6 +93,16 @@ Payload URL will be <Your Jenkins URL>/github-webhook/. Select application/json 
 ![Alt text](/images/8.png?raw=true "Webhook Configuration")
 Now you are all set.
 ![Alt text](/images/9.png?raw=true "Webhook Configured")
+
+### Adding Environment Variables
+
+To add Environment Variables for your Cluster go to Manage Jenkins Section.
+![Alt text](/images/13.png?raw=true "Environment Variables")
+
+### Pull Request Build Strategy
+
+In the Project Configuration select the option shown to prevent Branches associated with Pull Requests getting built twice.
+![Alt text](/images/10.png?raw=true "Environment Variables")
 
 ## Discarded Directory
 
