@@ -5,8 +5,11 @@
 Activity Page
 ![Alt text](/images/14.png?raw=true "Activity")
 
-A Pull Request Build in Staging Environment
-![Alt text](/images/12.png?raw=true "PR")
+A Pull Request being Built in Staging Environment
+![Alt text](/images/15.png?raw=true "PR being Built")
+
+A Successful Pull Request Built in Staging Environment
+![Alt text](/images/12.png?raw=true "PR Success")
 
 Continuous Integration System notification to GitHub on a successful PR build.
 ![Alt text](/images/11.png?raw=true "GitHub")
