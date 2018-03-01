@@ -16,6 +16,7 @@ podTemplate(label: label, containers: [
 
     node(label) {
 
+        sh 'ls'
 
         def jenkinsfileConfigFile = readFile('Jenkinsfile.json')
         def jenkinsfileConfig = new groovy.json.JsonSlurperClassic().parseText(jenkinsfileConfigFile)
