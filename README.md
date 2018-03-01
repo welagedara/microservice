@@ -12,7 +12,7 @@ A Successful Pull Request Built in Staging Environment
 ![Alt text](/images/12.png?raw=true "PR Success")
 
 Continuous Integration System notification to GitHub when a PR is being built.
-![Alt text](/images/11.png?raw=true "GitHub")
+![Alt text](/images/16.png?raw=true "GitHub")
 
 Continuous Integration System notification to GitHub upon a successful PR build.
 ![Alt text](/images/11.png?raw=true "GitHub")
