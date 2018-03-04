@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
 
 service:
-  type: LoadBalancer
+  type: NodePort
   port: 80
 
 # Do not change the following

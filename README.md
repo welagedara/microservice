@@ -73,6 +73,10 @@ Clean up
 ```
 ./9-helm_cleanup.sh
 ```
+To deploy only MySQL 
+```
+./9-helm_deploy_mysql.sh
+```
 
 ## Configuring Jenkins
 
