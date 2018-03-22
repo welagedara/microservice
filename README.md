@@ -126,7 +126,7 @@ You might find some useful code snippets in ./discarded directory.
  - Deploy the App( Using helm)
  - Rollback ( Using Helm)
  - Infrastructure Configuration( In the Infrastructure Repo)
- - Make use of skipping stages in Jenkins Pipelines
+ - Make use of skipping stages in Jenkins Pipelines( When Directive)
  
 ## References
  - [Spring Guidelines for Docker](https://spring.io/guides/gs/spring-boot-docker/)
